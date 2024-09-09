@@ -31,7 +31,6 @@ Certifique-se de ter os seguintes softwares instalados no seu ambiente de desenv
 ```bash
 git clone https://github.com/Schusban/help_desk.git
 cd help_desk
-npm install
 ```
 
 
@@ -43,6 +42,7 @@ npm install
 3. **Ambiente Backend:**
 ```bash
 cd backend
+npm install
 npm install -g @adonisjs/cli
 
 ```
@@ -50,6 +50,7 @@ npm install -g @adonisjs/cli
 4. **Ambiente Frontend:**
 ```bash
 cd frontend
+npm install
 npm install @nuxtjs/axios
 
 ```
