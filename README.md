@@ -43,7 +43,6 @@ cd help_desk
 ```bash
 cd backend
 npm install
-npm install -g @adonisjs/cli
 
 ```
 #### Agora, entre no terminal da pasta frontend e instale as dependências do projeto:
@@ -51,7 +50,6 @@ npm install -g @adonisjs/cli
 ```bash
 cd frontend
 npm install
-npm install @nuxtjs/axios
 
 ```
 
