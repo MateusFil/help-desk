@@ -70,4 +70,4 @@ adonis serve --dev
 ### Mão na Massa
 ![Typing SVG](https://readme-typing-svg.herokuapp.com?font=Fira+Code&weight=200&size=15&pause=1000&repeat=false&width=435&lines=Acesse+a+API+Frontend+em+http%3A%2F%2Flocalhost%3A3000)
 
-![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&weight=200&size=15&pause=1000&repeat=false&width=500&height=100&lines=Teste+o+Backend+via+Postman.+Api+rodando+em+http://127.0.0.1%3A3333)
+![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&weight=200&size=15&pause=1000&repeat=false&width=500&height=100&lines=Teste+o+Backend+via+Postman.+API+rodando+em+127.0.0.1:3333)
