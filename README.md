@@ -29,8 +29,8 @@ Certifique-se de ter os seguintes softwares instalados no seu ambiente de desenv
 1. **Clone o repositório:**
 
 ```bash
-git clone 
-cd help-desk
+git clone https://github.com/Schusban/help_desk.git
+cd help_desk
 npm install
 ```
 
