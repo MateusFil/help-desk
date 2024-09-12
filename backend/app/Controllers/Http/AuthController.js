@@ -32,8 +32,8 @@ class AuthController {
         return response.status(401).json({ error: 'Usuário ou senha incorretos' });
       }
 
-      const token = jwt.sign({ userId: user.id, tipo: user.tipo }, 'your_secret_key', { expiresIn: '1h' });
-      
+      const token = jwt.sign({ userId: user.id, email: user.email, tipo: user.tipo }, 'your_secret_key', { expiresIn: '1h' });
+       
       // Retorne o token, o tipo de usuário e uma mensagem de sucesso
       return response.json({
         message: 'Login realizado com sucesso!',
