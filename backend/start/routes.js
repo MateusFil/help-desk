@@ -7,6 +7,8 @@ Route.delete('deletar_usuario', 'UserAdminController.deletarUsuario')
 // Logar
 Route.post('login', 'AuthController.login')
 
+Route.post('logout', 'AuthController.logout')
+
 // Rota protegida com autenticação JWT
 Route.get('user', 'AuthController.getUser').middleware(['auth'])
 

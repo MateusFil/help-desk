@@ -41,41 +41,43 @@ export default {
     }
   },
   methods: {
-    async login() {
-      try {
-        const response = await this.$axios.post('/login', {
-          email: this.email,
-          password: this.password
-        });
+  async login() {
+    try {
+      const response = await this.$axios.post('/login', {
+        email: this.email,
+        password: this.password
+      });
 
-        // Verificar e armazenar o token
-        const token = response.data.token; // Certifique-se de que a resposta tem um campo `token`
-        if (token) {
-          localStorage.setItem('token', token);
-        } else {
-          console.error('Token not found in response');
-        }
+      // Verificar e armazenar o token
+      const token = response.data.token;
+      if (token) {
+        localStorage.setItem('token', token);
+        this.$store.commit('SET_TOKEN', token);
+      } else {
+        console.error('Token not found in response');
+      }
 
-        // Armazenar o usuário no store
-        this.$store.commit('SET_USER', response.data.user);
-        const userRole = response.data.user.tipo;
+      // Armazenar o usuário no store
+      this.$store.commit('SET_USER', response.data.user);
+      const userRole = response.data.user.tipo;
 
-        if (userRole === 1) {
-          this.$router.push('/Dashboard_Admin');
-        } else if (userRole === 2) {
-          this.$router.push('/Dashboard_User');
-        }
-      } catch (error) {
-        if (error.response) {
-          console.error('Login failed:', error.response.data);
-        } else if (error.request) {
-          console.error('No response received:', error.request);
-        } else {
-          console.error('Error:', error.message);
-        }
+      // Redirecionar com base no tipo de usuário
+      if (userRole === 1) {
+        await this.$router.push('/Dashboard_Admin');
+      } else if (userRole === 2) {
+        await this.$router.push('/Dashboard_User');
+      }
+    } catch (error) {
+      if (error.response) {
+        console.error('Login failed:', error.response.data);
+      } else if (error.request) {
+        console.error('No response received:', error.request);
+      } else {
+        console.error('Error:', error.message);
       }
     }
   }
+}
 }
 </script>
 
