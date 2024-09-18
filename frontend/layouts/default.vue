@@ -78,13 +78,13 @@ export default {
             { icon: 'mdi-apps', title: 'Dashboard Admin', to: '/Dashboard_Admin' },
             { icon: 'mdi-account-group', title: 'Gerenciar Usuários', to: '/admin/gerenciar_usuario' },
             { icon: 'mdi-ticket', title: 'Abrir Chamados', to: '/abrir_chamados' },
-            { icon: 'mdi-eye', title: 'Acompanhar Chamados', to: '/admin/acompanhar_chamados' },
+            { icon: 'mdi-pencil', title: 'Gerenciar Chamados', to: '/admin/acompanhar_chamados' },
           ]
         } else if (user.tipo === 2) {
           return [
             { icon: 'mdi-apps', title: 'Dashboard User', to: '/Dashboard_User' },
             { icon: 'mdi-ticket', title: 'Abrir Chamados', to: '/abrir_chamados' },
-            { icon: 'mdi-eye', title: 'Acompanhar Chamados', to: '/user/acompanhar_chamados' },
+            { icon: 'mdi-pencil', title: 'Editar Chamados', to: '/user/acompanhar_chamados' },
           ]
         }
       } else {
