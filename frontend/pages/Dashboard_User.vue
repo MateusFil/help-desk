@@ -12,7 +12,7 @@
               <v-spacer></v-spacer>
               <span class="count">{{ ticketCountsCriados.emAndamento }}</span>
             </v-card-title>
-            <v-card-actions>
+            <v-card-actions style="display: flex; justify-content: right;">
               <v-btn @click="visualizarTickets('Em Andamento', 'criados')">Visualizar</v-btn>
             </v-card-actions>
           </v-card>
@@ -24,7 +24,7 @@
               <v-spacer></v-spacer>
               <span class="count">{{ ticketCountsCriados.emProducao }}</span>
             </v-card-title>
-            <v-card-actions>
+            <v-card-actions style="display: flex; justify-content: right;">
               <v-btn @click="visualizarTickets('Em Produção', 'criados')">Visualizar</v-btn>
             </v-card-actions>
           </v-card>
@@ -36,7 +36,7 @@
               <v-spacer></v-spacer>
               <span class="count">{{ ticketCountsCriados.backlog }}</span>
             </v-card-title>
-            <v-card-actions>
+            <v-card-actions style="display: flex; justify-content: right;">
               <v-btn @click="visualizarTickets('Backlog', 'criados')">Visualizar</v-btn>
             </v-card-actions>
           </v-card>
@@ -53,7 +53,7 @@
               <v-spacer></v-spacer>
               <span class="count">{{ ticketCountsAtribuidos.emAndamento }}</span>
             </v-card-title>
-            <v-card-actions>
+            <v-card-actions style="display: flex; justify-content: right;">
               <v-btn @click="visualizarTickets('Em Andamento', 'atribuido')">Visualizar</v-btn>
             </v-card-actions>
           </v-card>
@@ -65,7 +65,7 @@
               <v-spacer></v-spacer>
               <span class="count">{{ ticketCountsAtribuidos.emProducao }}</span>
             </v-card-title>
-            <v-card-actions>
+            <v-card-actions style="display: flex; justify-content: right;">
               <v-btn @click="visualizarTickets('Em Produção', 'atribuido')">Visualizar</v-btn>
             </v-card-actions>
           </v-card>
@@ -77,7 +77,7 @@
               <v-spacer></v-spacer>
               <span class="count">{{ ticketCountsAtribuidos.backlog }}</span>
             </v-card-title>
-            <v-card-actions>
+            <v-card-actions style="display: flex; justify-content: right;">
               <v-btn @click="visualizarTickets('Backlog', 'atribuido')">Visualizar</v-btn>
             </v-card-actions>
           </v-card>
@@ -122,7 +122,7 @@
               </v-list-item-content>
             </v-list-item>
           </v-card-text>
-          <v-card-actions>
+          <v-card-actions style="display: flex; justify-content: right;">
             <v-btn text @click="dialog = false">Fechar</v-btn>
           </v-card-actions>
         </v-card>
