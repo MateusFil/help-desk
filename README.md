@@ -36,7 +36,7 @@ cd 2024-2-chamados
 
 2. **Configure o ambiente:**
 
-    Crie um arquivo .env na raiz do projeto. Certifique-se de ajustar as variáveis conforme necessário para o ambiente de desenvolvimento local.
+    Crie um arquivo .env na raiz do projeto "backend". Certifique-se de ajustar as variáveis conforme necessário para o ambiente de desenvolvimento local.
 
 #### Agora, entre no terminal da pasta backend e instale as dependências do projeto:
 3. **Ambiente Backend:**
