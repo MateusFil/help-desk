@@ -45,21 +45,25 @@ export default {
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background-color: #f5f5f5;
+  padding: 1rem;
+  background-color: rgb(32, 32, 32);
+  border-radius: 8px;
+
 }
 
 .form-container {
-  background-color: #ffffff;
+  background-color: rgb(32, 32, 32);
   padding: 2rem;
+  font-size: 1.0rem;
   border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   width: 100%;
   max-width: 500px;
 }
 
 h2 {
   margin-bottom: 1.5rem;
-  color: #333;
+  color: #ffffff;
   font-size: 1.5rem;
 }
 
@@ -70,15 +74,17 @@ h2 {
 label {
   display: block;
   margin-bottom: 0.5rem;
-  color: #555;
+  color: #ffffff;
   font-weight: bold;
 }
 
 input[type="text"],
 select {
+  background-color: #242323;
+  color: #ffffff;;
   width: 100%;
   padding: 0.75rem;
-  border: 1px solid #ddd;
+  border: 1px solid #ffffff;
   border-radius: 4px;
   box-sizing: border-box;
 }

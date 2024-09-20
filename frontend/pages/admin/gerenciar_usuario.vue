@@ -13,7 +13,6 @@
     <table>
       <thead>
         <tr>
-          <th></th>
           <th>Nome</th>
           <th>Email</th>
           <th>Tipo</th>
@@ -26,8 +25,12 @@
           <td>{{ user.email }}</td>
           <td>{{ user.tipo }}</td>
           <td>
-            <button @click="abrirEditarUsuario(user)" class="action-button">Editar</button>
-            <button @click="deletarUsuario(user.email)" class="action-button">Excluir</button>
+            <v-icon small @click="abrirEditarUsuario(user)">
+              mdi-pencil
+            </v-icon>
+            <v-icon small @click="deletarUsuario(user.email)">
+              mdi-delete
+            </v-icon>
           </td>
         </tr>
       </tbody>
@@ -42,8 +45,6 @@
         </div>
       </div>
     </transition>
-
-
 
     <!-- Guia Suspensa para Editar Usuário -->
     <transition name="fade">
@@ -74,11 +75,10 @@ export default {
   data() {
     return {
       users: [],
-      selectedUsers: [],
       showRegistrarUsuario: false,
       showEditarUsuario: false,
       selectedUser: null,
-      token: localStorage.getItem('token') || '', 
+      token: localStorage.getItem('token') || '',
       searchQuery: '',
     };
   },
@@ -151,7 +151,7 @@ export default {
     async deletarUsuario(email) {
       const confirmar = confirm('Deseja realmente excluir este usuário?');
       if (!confirmar) {
-        return; // Cancela a exclusão se o usuário escolher "Não"
+        return;
       }
       try {
         await axios.delete('http://127.0.0.1:3333/deletar_usuario', {
@@ -162,7 +162,7 @@ export default {
             email,
           },
         });
-        this.listar_usuarios(); // Atualiza a lista após exclusão
+        this.listar_usuarios();
       } catch (error) {
         console.error('Falha ao deletar usuário:', error.message);
       }
@@ -171,9 +171,13 @@ export default {
 }
 </script>
 
+
 <style scoped>
-.gerenciar_usuario {
+.gerenciar-usuario {
   padding: 1rem;
+  background-color: #313131;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .header {
@@ -181,6 +185,11 @@ export default {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 1rem;
+  background-color: #222121;
+
+  color: #fafafa;
+  padding: 1rem;
+  border-radius: 8px;
 }
 
 .add-user-button {
@@ -188,51 +197,47 @@ export default {
   color: white;
   padding: 0.5rem 1rem;
   border: none;
-  border-radius: 4px;
+  border-radius: 8px;
   cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .add-user-button:hover {
   background-color: #45a049;
 }
 
+.search-input {
+  padding: 0.5rem;
+  border-radius: 8px;
+  border: none;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  background-color: rgb(32, 32, 32);
+  color: #ffffff;
+}
+
 table {
   width: 100%;
   border-collapse: collapse;
+  background-color: rgb(32, 32, 32);-color: #b34040;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
 }
 
 th, td {
-  padding: 0.5rem;
+  padding: 1rem;
   text-align: left;
   border-bottom: 1px solid #ddd;
 }
 
-input[type="checkbox"] {
-  margin-right: 0.5rem;
-}
-
-.action-button {
-  background-color: #2196F3;
-  color: white;
-  padding: 0.3rem 0.6rem;
-  border: none;
-  border-radius: 4px;
+.v-icon {
+  color: #1976d2;
   cursor: pointer;
-  margin-right: 0.5rem;
 }
 
-.action-button:hover {
-  background-color: #1976D2;
+.v-icon:hover {
+  color: #1565c0;
 }
-.action-cancel-button {
-  background-color: #f44336;
-  margin-top: 0.5rem;
-}
-
-.cancel-button:hover {
-  background-color: #e53935;
-}
-
 
 .dropdown {
   position: fixed;
@@ -248,15 +253,21 @@ input[type="checkbox"] {
 }
 
 .dropdown-content {
-  background: white;
-  padding: 1rem;
+  background: rgb(54, 54, 54);
+  padding: 2rem;
   border-radius: 8px;
-  width: 400px;
-  max-width: 90%;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
   position: relative;
+  width: 90%;
+  max-width: 500px;
 }
-
+.v-text-field,
+.v-select,
+.v-textarea {
+  background-color: rgb(32, 32, 32);
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
 .close-button {
   position: absolute;
   top: 10px;

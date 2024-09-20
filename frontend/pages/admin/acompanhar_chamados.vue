@@ -164,5 +164,53 @@ export default {
 <style scoped>
 .acompanhar-chamados {
   padding: 1rem;
+  background-color: #313131;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.v-data-table {
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.v-toolbar {
+  background-color: #1976d2;
+  color: rgb(250, 250, 250);
+  border-radius: 8px 8px 0 0;
+}
+
+.v-text-field,
+.v-select,
+.v-textarea {
+  background-color: rgb(32, 32, 32);
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilo para a cor do texto e do rótulo do campo de busca */
+.v-text-field input {
+  color: #1976d2; /* Cor da letra do campo de busca */
+}
+
+.v-text-field .v-label {
+  color: #000000; /* Cor do rótulo do campo de busca */
+}
+
+.v-card {
+  border-radius: 8px;
+}
+
+.v-btn {
+  border-radius: 8px;
+}
+
+.v-icon {
+  color: #1976d2;
+  cursor: pointer;
+}
+
+.v-icon:hover {
+  color: #1565c0;
 }
 </style>

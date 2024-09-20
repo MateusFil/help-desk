@@ -85,5 +85,9 @@ export default {
 .v-card {
   max-width: 400px;
   margin: auto;
+  padding: 1rem;
+  background-color: #313131;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 </style>

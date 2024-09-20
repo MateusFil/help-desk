@@ -130,5 +130,16 @@ export default {
 <style scoped>
 .abrir-chamado {
   padding: 1rem;
+  background-color: #313131;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.v-text-field,
+.v-select,
+.v-textarea {
+  background-color: rgb(32, 32, 32);
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 </style>
