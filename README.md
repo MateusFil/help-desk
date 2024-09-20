@@ -29,14 +29,14 @@ Certifique-se de ter os seguintes softwares instalados no seu ambiente de desenv
 1. **Clone o repositório:**
 
 ```bash
-git clone https://github.com/Schusban/help_desk.git
-cd help_desk
+git clone https://github.com/AthonEdu/2024-2-chamados.git
+cd 2024-2-chamados
 ```
 
 
 2. **Configure o ambiente:**
 
-    Crie um arquivo .env na raiz do projeto. Certifique-se de ajustar as variáveis conforme necessário para o ambiente de desenvolvimento local.
+    Crie um arquivo .env na raiz do projeto "backend". Certifique-se de ajustar as variáveis conforme necessário para o ambiente de desenvolvimento local.
 
 #### Agora, entre no terminal da pasta backend e instale as dependências do projeto:
 3. **Ambiente Backend:**
