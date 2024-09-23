@@ -26,6 +26,18 @@
           <label for="confirmPassword">Confirme a Senha:</label>
           <input type="password" id="confirmPassword" v-model="confirmPassword" required />
         </div>
+        <div class="form-group">
+        <label for="setor">Setor:</label>
+        <select id="setor" v-model="setor" required>
+          <option value="TI">TI</option>
+          <option value="RH">RH</option>
+          <option value="ADM">ADM</option>
+          <option value="FINANCEIRO">FINANCEIRO</option>
+          <option value="ESTOQUE">ESTOQUE</option>
+          <option value="PRODUCAO">PRODUCAO</option>
+        </select>
+      </div>
+
         <button type="submit">Registrar</button>
       </form>
     </div>
@@ -39,6 +51,7 @@ export default {
       nome_completo: '',
       email: '',
       tipo: '',
+      setor: '',
       password: '',
       confirmPassword: ''
     };
@@ -55,6 +68,7 @@ export default {
           nome_completo: this.nome_completo,
           email: this.email,
           tipo: this.tipo,
+          setor: this.setor,
           password: this.password,
         });
         alert('Usuário registrado com sucesso!');

@@ -113,29 +113,37 @@ export default {
       }
     },
     editChamado(item) {
-      this.editChamadoData = { ...item };
-      this.dialog = true;
-    },
-    async submitEdit() {
-      if (this.$refs.form.validate()) {
-        try {
-          await axios.put(
-            `http://127.0.0.1:3333/editar_chamado/${this.editChamadoData.id}`,
-            this.editChamadoData,
-            {
-              headers: {
-                Authorization: `Bearer ${localStorage.getItem('token')}`,
-              },
-            }
-          );
-          alert('Chamado editado com sucesso!');
-          this.dialog = false;
-          this.carregarChamados(); // Recarrega a lista de chamados
-        } catch (error) {
-          console.error('Erro ao editar chamado:', error);
+  // Clonar os dados do chamado selecionado
+  this.editChamadoData = { ...item };
+
+  this.editChamadoData.atribuido_para = item.atribuido ? item.atribuido : '';
+
+  this.dialog = true;
+},
+
+  async submitEdit() {
+  if (this.$refs.form.validate()) {
+    try {
+      // Atualizar o campo "atribuido" com o valor de "atribuido_para" antes de enviar
+      this.editChamadoData.atribuido = this.editChamadoData.atribuido_para;
+
+      await axios.put(
+        `http://127.0.0.1:3333/editar_chamado/${this.editChamadoData.id}`,
+        this.editChamadoData,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
         }
-      }
-    },
+      );
+      alert('Chamado editado com sucesso!');
+      this.dialog = false;
+      this.carregarChamados(); // Recarrega a lista de chamados
+    } catch (error) {
+      console.error('Erro ao editar chamado:', error);
+    }
+  }
+},
     closeDialog() {
       this.dialog = false;
     },

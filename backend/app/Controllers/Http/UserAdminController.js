@@ -12,10 +12,9 @@ class UserAdminController {
    * registrar um novo usuário
    */
   async register({ request, response }) {
-    const { nome_completo, email, tipo, password } = request.all()
+    const { nome_completo, email, tipo, password, setor } = request.all()
 
-    if (!nome_completo || !email || !tipo || !password) {
-      console.log('Campos faltando:', { nome_completo, email, tipo, password })
+    if (!nome_completo || !email || !tipo || !password || !setor) {
       return response.status(400).json({ error: 'Todos os campos são obrigatórios' })
     }
 
@@ -32,9 +31,9 @@ class UserAdminController {
 
       // Se tipo é 1, cria um administrador, caso contrário, cria um usuário comum
       if (parseInt(tipo) === 1) {
-        await UserAdmin.create({ nome_completo, email, tipo, password: hashedPassword })
+        await UserAdmin.create({ nome_completo, email, tipo, password: hashedPassword, setor })
       } else {
-        await User.create({ nome_completo, email, tipo, password: hashedPassword })
+        await User.create({ nome_completo, email, tipo, password: hashedPassword, setor })
       }
 
       return response.status(201).json({ message: 'Usuário registrado com sucesso' })
@@ -50,10 +49,10 @@ class UserAdminController {
     async listarUsuarios({ response }) {
     try {
       // Obtenha todos os usuários comuns
-      const users = await User.query().select('nome_completo', 'email', 'tipo').fetch()
+      const users = await User.query().select('nome_completo', 'email', 'tipo','setor').fetch()
       
       // Obtenha todos os administradores
-      const admins = await UserAdmin.query().select('nome_completo', 'email', 'tipo').fetch()
+      const admins = await UserAdmin.query().select('nome_completo', 'email', 'tipo', 'setor').fetch()
       console.log(users.toJSON(), admins.toJSON())
       // Combine os resultados
       const allUsers = [...users.toJSON(), ...admins.toJSON()]
@@ -142,8 +141,8 @@ class UserAdminController {
       }
   
       // Verificar os dados a serem atualizados
-      const { email, nome_completo, tipo, password } = request.only(['email', 'nome_completo', 'tipo', 'password']);
-      
+      const { email, nome_completo, tipo, password, setor } = request.only(['email', 'nome_completo', 'tipo', 'password', 'setor']);
+
       if (!email) {
         return response.status(400).json({ message: 'Email é obrigatório' });
       }
@@ -165,6 +164,7 @@ class UserAdminController {
         admin.nome_completo = nome_completo || user.nome_completo;
         admin.email = user.email;
         admin.tipo = 1;
+        admin.setor = user.setor;
         admin.password = user.password; // Mantém a senha atual
         await admin.save();
   
@@ -176,6 +176,7 @@ class UserAdminController {
         const newUser = new User();
         newUser.nome_completo = nome_completo || user.nome_completo;
         newUser.email = user.email;
+        newUser.setor = user.setor;
         newUser.tipo = 2;
         newUser.password = user.password; // Mantém a senha atual
         await newUser.save();
@@ -189,6 +190,7 @@ class UserAdminController {
       if (user) {
         user.nome_completo = nome_completo || user.nome_completo;
         user.tipo = tipo !== undefined ? tipo : user.tipo;
+        user.setor = setor || user.setor;
   
         // Apenas atualiza a senha se ela foi fornecida, caso contrário mantém a senha atual
         if (password) {

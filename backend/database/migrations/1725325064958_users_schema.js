@@ -10,6 +10,7 @@ class UsersSchema extends Schema {
       table.string('email', 254).notNullable().unique() // Email do usuário
       table.string('password', 60).notNullable() // Senha do usuário
       table.integer('tipo').defaultTo(2) // Tipo do usuário (2 para usuário comum)
+      table.enu('setor', ['TI', 'RH', 'ADM', 'FINANCEIRO', 'ESTOQUE', 'PRODUCAO'])
       table.timestamps() // Created_at e Updated_at
     })
   }

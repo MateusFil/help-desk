@@ -10,6 +10,7 @@ class UsersAdminSchema extends Schema {
       table.string('email', 254).notNullable().unique() // Email do usuário
       table.string('password', 60).notNullable() // Senha do usuário
       table.integer('tipo').defaultTo(1) // Tipo do usuário (1 para admin)
+      table.enu('setor', ['TI', 'RH', 'ADM', 'FINANCEIRO', 'ESTOQUE', 'PRODUCAO'])
       table.timestamps() // Created_at e Updated_at
     })
   }

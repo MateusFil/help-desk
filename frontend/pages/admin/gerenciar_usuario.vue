@@ -16,6 +16,7 @@
           <th>Nome</th>
           <th>Email</th>
           <th>Tipo</th>
+          <th>Setor</th>
           <th>Ações</th>
         </tr>
       </thead>
@@ -24,6 +25,7 @@
           <td>{{ user.nome_completo }}</td>
           <td>{{ user.email }}</td>
           <td>{{ user.tipo }}</td>
+          <td>{{ user.setor }}</td>
           <td>
             <v-icon small @click="abrirEditarUsuario(user)">
               mdi-pencil
@@ -135,6 +137,7 @@ export default {
           email: user.email,          
           nome_completo: user.nome_completo,
           tipo: user.tipo,
+          setor: user.setor,
         }, {
           headers: {
             Authorization: `Bearer ${this.token}`,

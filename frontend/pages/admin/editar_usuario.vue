@@ -15,6 +15,17 @@
             <option value="2">Usuário Comum</option>
           </select>
         </div>
+        <div class="form-group">
+        <label for="setor">Setor:</label>
+        <select id="setor" v-model="user.setor" required>
+          <option value="TI">TI</option>
+          <option value="RH">RH</option>
+          <option value="ADM">ADM</option>
+          <option value="FINANCEIRO">FINANCEIRO</option>
+          <option value="ESTOQUE">ESTOQUE</option>
+          <option value="PRODUCAO">PRODUCAO</option>
+        </select>
+      </div>
 
         <button type="submit">Salvar</button>
         <button @click.prevent="cancelarEdicao" class="cancel-button">Cancelar</button>
