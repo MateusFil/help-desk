@@ -14,7 +14,7 @@
         :rules="[rules.required]"
         required
       />
-      <v-select
+      <v-select v-if="userRole === 1 || userRole === 3"
         label="Atribuído para"
         :items="usuarios"
         item-text="nome_completo" 
@@ -22,7 +22,7 @@
         v-model="chamado.atribuido_para"
         :rules="[rules.required]"
         required
-      />
+      ></v-select>
       <v-text-field
         label="Responsável"
         v-model="chamado.responsavel"
@@ -30,14 +30,14 @@
         required
         readonly
       />
-      <v-text-field
+      <v-text-field v-if="userRole === 1"
         label="Tempo de execução (Horas)"
         v-model="chamado.tempo_execucao"
         :rules="[rules.required, rules.number]"
         required
         type="number"
       />
-      <v-select
+      <v-select v-if="userRole === 1 || userRole === 3"
         label="Status"
         :items="statusOptions"
         v-model="chamado.status"
@@ -52,18 +52,22 @@
 <script>
 import axios from 'axios';
 
+
+
 export default {
   data() {
+    
     return {
       chamado: {
         titulo: '',
         descricao: '',
         atribuido_para: '',  // E-mail do usuário atribuído
         responsavel: '',    // E-mail do responsável, preenchido automaticamente
-        tempo_execucao: '',
-        status: '',
+        tempo_execucao: '0',
+        status: 'Backlog',
       },
       usuarios: [],
+      userRole: this.$store.state.user.tipo, 
       statusOptions: ['Backlog', 'Em Andamento', 'Em Produção'],
       valid: false,
       rules: {

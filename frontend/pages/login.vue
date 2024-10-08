@@ -66,6 +66,8 @@ export default {
         await this.$router.push('/Dashboard_Admin');
       } else if (userRole === 2) {
         await this.$router.push('/Dashboard_User');
+      }else if (userRole === 3) {
+        await this.$router.push('/Dashboard_Tecnico');
       }
     } catch (error) {
       if (error.response) {
