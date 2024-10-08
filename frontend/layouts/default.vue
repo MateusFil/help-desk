@@ -86,6 +86,12 @@ export default {
             { icon: 'mdi-ticket', title: 'Abrir Chamados', to: '/abrir_chamados' },
             { icon: 'mdi-pencil', title: 'Editar Chamados', to: '/user/acompanhar_chamados' },
           ]
+        } else if (user.tipo === 3) {
+          return [
+            { icon: 'mdi-apps', title: 'Dashboard Tecnico', to: '/Dashboard_Tecnico' },
+            { icon: 'mdi-ticket', title: 'Abrir Chamados', to: '/abrir_chamados' },
+            { icon: 'mdi-pencil', title: 'Editar Chamados', to: '/tecnico/acompanhar_chamados' },
+          ]
         }
       } else {
         return [

@@ -47,7 +47,7 @@ class TicketController {
       }
 
       if (!usuarioAtribuido) {
-        return response.status(404).json({ error: 'Usuário atribuído não encontrado' })
+        usuarioAtribuido = ''
       }
 
       // Cria o ticket com o responsável e o usuário atribuído

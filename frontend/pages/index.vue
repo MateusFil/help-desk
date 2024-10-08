@@ -11,6 +11,7 @@
           focada na facilidade de uso para todos os tipos de usuários.
         </p>
       </v-card-subtitle>
+      
     </v-card>
 
     <!-- Seção Interativa da Equipe -->
@@ -20,7 +21,7 @@
         <v-carousel-item v-for="(chunk, index) in teamChunks" :key="index">
           <v-row justify="center">
             <v-col v-for="(member, i) in chunk" :key="i" cols="12" md="4" class="text-center">
-              <v-avatar size="120" class="mx-auto mb-3">
+++              <v-avatar size="120" class="mx-auto mb-3">
                 <v-img :src="member.photo" alt="Foto do membro da equipe" />
               </v-avatar>
               <h3>{{ member.name }}</h3>
