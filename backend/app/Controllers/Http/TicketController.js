@@ -123,6 +123,25 @@ class TicketController {
       return response.status(500).json({ error: 'Erro ao editar chamado' })
     }
   }
+  async updateAtribuido({ params, request, response }) {
+    try {
+      const ticketId = params.id
+      const ticket = await Ticket.find(ticketId)
+
+      if (!ticket) {
+        return response.status(404).json({ error: 'Chamado não encontrado' })
+      }
+      console.log(request.only(['atribuido']))
+      const data = request.only(['atribuido'])
+      ticket.merge(data)
+      await ticket.save()
+
+      return response.status(200).json(ticket)
+    } catch (error) {
+      console.error('Erro ao atribuir usuario:', error)
+      return response.status(500).json({ error: 'Erro ao atribuir usuario' })
+    }
+  }
 
   /**
    * Deletar um chamado por ID
