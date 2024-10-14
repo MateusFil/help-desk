@@ -31,22 +31,20 @@
     <!-- Edit Chamado Dialog -->
     <v-dialog v-model="dialog" max-width="500px">
       <v-card>
-        <v-card-title>
-          <span class="headline">Editar Chamado</span>
+        <div class="title-chamado">
+          <v-card-title>
+          <span class="headline">Editar Chamado</span>         
         </v-card-title>
+        <v-btn class="botaoassumir" text @click="assumirChamado">Assumir Chamado</v-btn>
+        </div>
+        
+        
+        
+
         <v-card-text>
           <v-form ref="form" v-model="valid">
             <v-text-field label="Título" v-model="editChamadoData.titulo" :rules="[rules.required]" required />
             <v-textarea label="Descrição" v-model="editChamadoData.descricao" :rules="[rules.required]" required />
-            <v-select
-              label="Atribuído para"
-              :items="usuarios"
-              item-text="nome_completo"
-              item-value="email"
-              v-model="editChamadoData.atribuido"
-              :rules="[rules.required]"
-              required
-            />
             <v-text-field label="Tempo de execução (Horas)" v-model="editChamadoData.tempo_execucao" required type="number" />
             <v-select label="Status" :items="statusOptions" v-model="editChamadoData.status" required />
           </v-form>
@@ -139,6 +137,27 @@ export default {
         }
       }
     },
+    async assumirChamado() {
+      //console.log(this.$store.state.user.email)
+      if (confirm('Tem certeza que deseja assumir esse chamado?')) {
+        try {
+          await axios.put(
+            `http://127.0.0.1:3333/editar_atribuido/${this.editChamadoData.id}`,
+            {'atribuido': this.$store.state.user.email},
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem('token')}`,
+              },
+            }
+          );
+          alert('Chamado editado com sucesso!');
+          this.dialog = false;
+          this.carregarChamados(); // Recarrega a lista de chamados
+        } catch (error) {
+          console.error('Erro ao editar chamado:', error);
+        }
+      }
+    },
     async deleteChamado(id) {
       if (confirm('Tem certeza que deseja deletar este chamado?')) {
         try {
@@ -167,6 +186,23 @@ export default {
   background-color: #313131;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+.botaoassumir {
+  color: #FFFF;
+  background-color: #1976d2;
+  position: absolute;
+  right: 16px;
+  top: 16px;
+  padding: 5px;
+  
+  
+
+}
+
+.title-chamado {
+  display: flex;
+  width: 100%;
+  position: relative;
 }
 
 .v-data-table {
