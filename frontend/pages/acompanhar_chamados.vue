@@ -127,6 +127,28 @@ export default {
       this.editChamadoData = { ...item };
       this.dialog = true;
     },
+    async assumirChamado() {
+      //console.log(this.$store.state.user.email)
+      if (confirm('Tem certeza que deseja assumir esse chamado?')) {
+        try {
+          await axios.put(
+            `http://127.0.0.1:3333/editar_atribuido/${this.editChamadoData.id}`,
+            {'atribuido': this.$store.state.user.email},
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem('token')}`,
+              },
+            }
+          );
+          alert('Chamado editado com sucesso!');
+          this.dialog = false;
+          this.carregarChamados(); // Recarrega a lista de chamados
+        } catch (error) {
+          console.error('Erro ao editar chamado:', error);
+        }
+      }
+    },
+
     async submitEdit() {
       if (this.$refs.form.validate()) {
         try {
