@@ -7,7 +7,7 @@ class TokensSchema extends Schema {
     this.create('tokens', (table) => {
       table.increments() // ID da tabela
       table.integer('user_id').unsigned().notNullable() // ID do usuário
-      table.enu('user_type', ['users', 'users_admin']).notNullable() // Tipo de usuário
+      table.enu('user_type', ['users', 'users']).notNullable() // Tipo de usuário
       table.string('token', 255).notNullable().unique().index() // Token
       table.string('type', 80).notNullable() // Tipo de token
       table.boolean('is_revoked').defaultTo(false) // Indica se o token foi revogado

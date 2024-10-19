@@ -16,6 +16,7 @@
           <select id="tipo" v-model="tipo" required>
             <option value="1">Administrador</option>
             <option value="2">Usuário Comum</option>
+            <option value="3">Ténico de TI</option>
           </select>
         </div>
         <div class="form-group">

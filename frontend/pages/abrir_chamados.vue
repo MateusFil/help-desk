@@ -1,3 +1,4 @@
+
 <template>
   <div class="abrir-chamado">
     <h2>Abrir Chamado</h2>
@@ -123,6 +124,7 @@ export default {
           };
         } catch (error) {
           console.error('Erro ao abrir chamado:', error.response ? error.response.data : error.message);
+        
           alert(`Erro ao abrir chamado: ${error.response ? error.response.data.error : error.message}`);
         }
       }

@@ -2,7 +2,7 @@
 
 const Ticket = use('App/Models/Ticket')
 const User = use('App/Models/User')
-const UserAdmin = use('App/Models/UserAdmin')
+//const UserAdmin = use('App/Models/User')
 const jwt = require('jsonwebtoken')
 
 class TicketController {
@@ -42,9 +42,9 @@ class TicketController {
 
       // Verifica se o usuário atribuído existe
       let usuarioAtribuido = await User.findBy('email', atribuido_para)
-      if (!usuarioAtribuido) {
+      /*if (!usuarioAtribuido) {
         usuarioAtribuido = await UserAdmin.findBy('email', atribuido_para)
-      }
+      }*/
 
       if (!usuarioAtribuido) {
         usuarioAtribuido = ''
@@ -170,9 +170,10 @@ class TicketController {
   async AtribuirUsuario({ response }) {
     try {
       const usuariosComuns = await User.all()
-      const usuariosAdmins = await UserAdmin.all()
+      //const usuariosAdmins = await User.all()
+      //const usuariosAdmins = await UserAdmin.all() - > código original
 
-      const allUsers = usuariosComuns.rows.concat(usuariosAdmins.rows)
+      const allUsers = usuariosComuns.rows.concat(usuariosComuns.rows)
 
       return response.status(200).json(allUsers)
     } catch (error) {
