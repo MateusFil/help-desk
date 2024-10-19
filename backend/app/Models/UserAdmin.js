@@ -4,7 +4,7 @@ const Model = use('Model')
 
 class UserAdmin extends Model {
   static get table () {
-    return 'users_admin'
+    return 'users'
   }
 
   static get fillable () {

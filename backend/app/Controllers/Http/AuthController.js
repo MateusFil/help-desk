@@ -1,7 +1,7 @@
 'use strict'
 
 const User = use('App/Models/User')
-const UserAdmin = use('App/Models/UserAdmin')
+//const UserAdmin = use('App/Models/UserAdmin')
 const Token = use('App/Models/Token')
 const RevokedToken = use('App/Models/RevokedToken')
 const Hash = use('Hash')
@@ -24,9 +24,9 @@ class AuthController {
       let user = await User.query().where('email', email).first();
 
       // Se não encontrado, verifique na tabela de administradores
-      if (!user) {
+      /*if (!user) {
         user = await UserAdmin.query().where('email', email).first();
-      }
+      }*/
 
       if (!user || !(await Hash.verify(password, user.password))) {
         return response.status(401).json({ error: 'Usuário ou senha incorretos' });
