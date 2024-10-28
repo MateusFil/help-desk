@@ -1,13 +1,7 @@
 <template>
   <div class="acompanhar-chamados">
     <h2>Acompanhar Chamados</h2>
-    <v-data-table
-      :headers="headers"
-      :items="chamados"
-      item-key="id"
-      class="elevation-1"
-      :search="search"
-    >
+    <v-data-table :headers="headers" :items="chamados" item-key="id" class="elevation-1" :search="search">
       <!-- Slot para o conteúdo superior -->
       <template #top>
         <v-toolbar flat>
@@ -19,51 +13,68 @@
 
       <!-- Slot para as ações em cada linha -->
       <template #item.actions="{ item }">
-        <v-icon  small @click="editChamado(item)">
+        <v-icon small @click="editChamado(item)">
           mdi-pencil
         </v-icon>
-        <v-icon v-if="userRole === 1 || userRole === 3"
-         small @click="deleteChamado(item.id)">
+        <v-icon v-if="userRole === 1 || userRole === 3" small @click="deleteChamado(item.id)">
           mdi-delete
         </v-icon>
       </template>
     </v-data-table>
 
     <!-- Edit Chamado Dialog -->
-    <v-dialog v-model="dialog" class="cardChamado" max-width="900px">
-      <div class="infoChamado">
-        <v-card>
-          <div class="title-chamado">
-          <v-card-title>
-          <span class="headline">Editar Chamado</span>         
-          </v-card-title>
-          <v-btn v-if="userRole === 3"
-          class="botaoassumir" text @click="assumirChamado">Assumir Chamado</v-btn>
-        </div>
-          <v-card-text>
-            <v-form ref="form" v-model="valid">
-              <v-text-field label="Título" v-model="editChamadoData.titulo" :rules="[rules.required]" required />
-              <v-textarea label="Descrição" v-model="editChamadoData.descricao" :rules="[rules.required]" required />
-              <v-select
-                label="Atribuído para"
-                :items="usuarios"
-                item-text="nome_completo"
-                item-value="email"
-                v-model="editChamadoData.atribuido"
-                :rules="[rules.required]"
-                required
-              />
-              <v-text-field label="Tempo de execução (Horas)" v-model="editChamadoData.tempo_execucao" required type="number" />
-              <v-select label="Status" :items="statusOptions" v-model="editChamadoData.status" required />
-            </v-form>
-          </v-card-text>
+    <v-dialog v-model="dialog" max-width="900px">
+      <v-card style="overflow: hidden;">
+        <v-row>
+          <v-col>
+            <div class="title-chamado">
+              <v-card-title>
+                <span class="headline">Editar Chamado</span>
+              </v-card-title>
+              <v-btn v-if="userRole === 3 && editChamadoData.atribuido === null" class="botaoassumir" text
+                @click="assumirChamado">Assumir Chamado</v-btn>
+            </div>
+            <v-card-text>
+              <v-form ref="form" v-model="valid">
+                <v-text-field label="Título" v-model="editChamadoData.titulo" :rules="[rules.required]" required />
+                <v-textarea label="Descrição" v-model="editChamadoData.descricao" :rules="[rules.required]" required />
+                <v-select label="Atribuído para" :items="usuarios" item-text="nome_completo" item-value="email"
+                  v-model="editChamadoData.atribuido" />
+                <v-text-field label="Tempo de execução (Horas)" v-model="editChamadoData.tempo_execucao" required
+                  type="number" />
+                <v-select label="Status" :items="statusOptions" v-model="editChamadoData.status" required />
+              </v-form>
+            </v-card-text>
 
-          <v-card-actions>
-            <v-btn color="blue darken-1" text @click="closeDialog">Cancelar</v-btn>
-            <v-btn color="blue darken-1" text @click="submitEdit">Salvar</v-btn>
-          </v-card-actions>
-        </v-card>
-      </div>
+            <v-card-actions>
+              <v-btn color="blue darken-1" text @click="closeDialog">Cancelar</v-btn>
+              <v-btn color="blue darken-1" text @click="submitEdit">Salvar</v-btn>
+            </v-card-actions>
+          </v-col>
+
+          <v-col style="max-height:606px">
+            <v-card-title>
+              <span class="headline">Mensagens</span>
+            </v-card-title>
+            <div class="showMensagens">
+              <div class="title_outterChat" v-for="mensagem in mensagens">
+                <div style="display: flex; justify-content: space-between; padding-right: 0px;">
+                  <h6 style="margin-left: 0px;">{{mensagem.responsavel}}</h6>
+                  <h6>{{mensagem.created_at}}</h6>
+                </div>
+                <p>{{ mensagem.mensagem}}</p>
+              </div>
+            </div>
+            <v-card-text style="padding-top: 0;padding-left: 0;">
+              <v-textarea rows="3" style="resize: both; overflow: auto; min-height: 20px; width: 95%;"
+                v-model="message.mensagem" label="Mensagem"></v-textarea>
+            </v-card-text>
+            <v-card-actions>
+              <v-btn color="blue darken-1" text @click="submitMensagem">Enviar</v-btn>
+            </v-card-actions>
+          </v-col>
+        </v-row>
+      </v-card>
     </v-dialog>
   </div>
 </template>
@@ -74,9 +85,11 @@ import axios from 'axios';
 export default {
   data() {
     return {
+      message: {},
+      mensagens: [],
       chamados: [],
       usuarios: [],
-      userRole: this.$store.state.user.tipo, 
+      userRole: this.$store.state.user.tipo,
       search: '',
       dialog: false,
       valid: false,
@@ -111,6 +124,19 @@ export default {
         console.error('Erro ao carregar chamados:', error);
       }
     },
+    async carregarMensagens(id_chamado) {
+      try {
+        const response = await axios.get('http://127.0.0.1:3333/acompanhar_chat', {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+          params: { id_chamado }
+        });
+        this.mensagens = response.data;
+      } catch (error) {
+        console.error('Erro ao carregar mensagens:', error);
+      }
+    },
     async carregarUsuarios() {
       try {
         const response = await axios.get('http://127.0.0.1:3333/atribuir_usuario', {
@@ -123,8 +149,9 @@ export default {
         console.error('Erro ao carregar usuários:', error);
       }
     },
-    editChamado(item) {
+    async editChamado(item) {
       this.editChamadoData = { ...item };
+      await this.carregarMensagens(this.editChamadoData.id);
       this.dialog = true;
     },
     async assumirChamado() {
@@ -133,7 +160,7 @@ export default {
         try {
           await axios.put(
             `http://127.0.0.1:3333/editar_atribuido/${this.editChamadoData.id}`,
-            {'atribuido': this.$store.state.user.email},
+            { 'atribuido': this.$store.state.user.email },
             {
               headers: {
                 Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -148,6 +175,28 @@ export default {
         }
       }
     },
+
+    async submitMensagem() {
+      try {
+        this.message.id_chamado = this.editChamadoData.id
+        this.message.responsavel = this.$store.state.user.email
+        const response = await axios.post('http://127.0.0.1:3333/enviar_mensagem', this.message, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        });
+        // Limpar o formulário após sucesso
+        this.message = {
+          mensagem: '',
+        };
+        this.mensagens.push(response.data)
+      } catch (error) {
+        console.error('Erro ao abrir chamado:', error.response ? error.response.data : error.message);
+
+        alert(`Erro ao abrir chamado: ${error.response ? error.response.data.error : error.message}`);
+      }
+    },
+
 
     async submitEdit() {
       if (this.$refs.form.validate()) {
@@ -169,6 +218,7 @@ export default {
         }
       }
     },
+
     async deleteChamado(id) {
       if (confirm('Tem certeza que deseja deletar este chamado?')) {
         try {
@@ -220,11 +270,13 @@ export default {
 
 /* Estilo para a cor do texto e do rótulo do campo de busca */
 .v-text-field input {
-  color: #1976d2; /* Cor da letra do campo de busca */
+  color: #1976d2;
+  /* Cor da letra do campo de busca */
 }
 
 .v-text-field .v-label {
-  color: #000000; /* Cor do rótulo do campo de busca */
+  color: #000000;
+  /* Cor do rótulo do campo de busca */
 }
 
 .v-card {
@@ -243,12 +295,21 @@ export default {
 .v-icon:hover {
   color: #1565c0;
 }
-.infoChamado {
-  width: 100%;
+
+.showMensagens {
+  height: 57.2%;
+  width: 90%;
+  border: solid 1px #2b2b2b;
+  border-radius: 8px;
+  margin-top: 20px;
+  overflow-y: auto;
 }
-.cardChamado {
+/* .title_innerChat{
   display: flex;
-  position: relative;
+  gap: 40%
+} */
+.title_outterChat{
+  padding: 4px;
 }
 .botaoassumir {
   color: #FFFF;
@@ -264,5 +325,4 @@ export default {
   width: 100%;
   position: relative;
 }
-
 </style>

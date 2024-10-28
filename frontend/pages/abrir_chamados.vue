@@ -21,8 +21,6 @@
         item-text="nome_completo" 
         item-value="email" 
         v-model="chamado.atribuido_para"
-        :rules="[rules.required]"
-        required
       ></v-select>
       <v-text-field
         label="Responsável"
@@ -31,7 +29,7 @@
         required
         readonly
       />
-      <v-text-field v-if="userRole === 1"
+      <v-text-field v-if="userRole === 1 || userRole === 3"
         label="Tempo de execução (Horas)"
         v-model="chamado.tempo_execucao"
         :rules="[rules.required, rules.number]"
