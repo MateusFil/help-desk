@@ -81,6 +81,25 @@ class TicketController {
     }
   }
 
+  async indexUser({ request, response}) {
+    try {
+      const {
+        responsavel,
+      } = request.only([
+        "responsavel",
+      ]);
+      const chamadosUser = await Ticket.query()
+        .where('responsavel', responsavel)
+        .orWhere('atribuido', responsavel)
+        .fetch()
+
+      return response.status(200).json(chamadosUser)
+    } catch (error) {
+      console.error('Erro ao listar mensagens no chamado:', error)
+      return response.status(400).json({ error: error.message })
+    }
+  }
+
   /**
    * Listar chamados atribuídos ou responsáveis
    */
