@@ -79,6 +79,7 @@ export default {
             { icon: 'mdi-account-group', title: 'Gerenciar Usuários', to: '/admin/gerenciar_usuario' },
             { icon: 'mdi-ticket', title: 'Abrir Chamados', to: '/abrir_chamados' },
             { icon: 'mdi-pencil', title: 'Gerenciar Chamados', to: '/acompanhar_chamados' },
+            { icon: 'mdi-pencil', title: 'Teste', to: '/dashboard' },
           ]
         } else if (user.tipo === 2) {
           return [

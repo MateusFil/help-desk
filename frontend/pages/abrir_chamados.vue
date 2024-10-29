@@ -67,7 +67,7 @@ export default {
       },
       usuarios: [],
       userRole: this.$store.state.user.tipo, 
-      statusOptions: ['Backlog', 'Em Andamento', 'Em Produção'],
+      statusOptions: ['Backlog', 'Andamento', 'Finalizado'],
       valid: false,
       rules: {
         required: value => !!value || 'Campo obrigatório',
@@ -116,7 +116,7 @@ export default {
             titulo: '',
             descricao: '',
             atribuido_para: '',
-            responsavel: '',
+            responsavel: this.chamado.responsavel,
             tempo_execucao: '',
             status: '',
           };

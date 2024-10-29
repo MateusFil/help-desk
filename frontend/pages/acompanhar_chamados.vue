@@ -59,10 +59,10 @@
             <div class="showMensagens">
               <div class="title_outterChat" v-for="mensagem in mensagens">
                 <div style="display: flex; justify-content: space-between; padding-right: 0px;">
-                  <h6 style="margin-left: 0px;">{{mensagem.responsavel}}</h6>
-                  <h6>{{mensagem.created_at}}</h6>
+                  <h6 style="margin-left: 0px;">{{ mensagem.responsavel }}</h6>
+                  <h6>{{ mensagem.created_at }}</h6>
                 </div>
-                <p>{{ mensagem.mensagem}}</p>
+                <p>{{ mensagem.mensagem }}</p>
               </div>
             </div>
             <v-card-text style="padding-top: 0;padding-left: 0;">
@@ -90,6 +90,7 @@ export default {
       chamados: [],
       usuarios: [],
       userRole: this.$store.state.user.tipo,
+      emailLogado: this.$store.state.user.email,
       search: '',
       dialog: false,
       valid: false,
@@ -114,12 +115,31 @@ export default {
   methods: {
     async carregarChamados() {
       try {
-        const response = await axios.get('http://127.0.0.1:3333/admin/acompanhar_chamados', {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-          },
-        });
+        let url = ''
+        let objRequest = {}
+
+        if (this.userRole == 1 || this.userRole == 3) {
+          url = 'http://127.0.0.1:3333/admin/acompanhar_chamados'
+          objRequest = {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem('token')}`,
+            }
+          }
+        } else {
+          url = 'http://127.0.0.1:3333/user/acompanhar_chamados'
+          objRequest = {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem('token')}`,
+            },
+            params: {
+              responsavel: this.emailLogado
+            }
+          }
+        }
+
+        const response = await axios.get(url, objRequest);
         this.chamados = response.data;
+
       } catch (error) {
         console.error('Erro ao carregar chamados:', error);
       }
@@ -304,13 +324,15 @@ export default {
   margin-top: 20px;
   overflow-y: auto;
 }
+
 /* .title_innerChat{
   display: flex;
   gap: 40%
 } */
-.title_outterChat{
+.title_outterChat {
   padding: 4px;
 }
+
 .botaoassumir {
   color: #FFFF;
   background-color: #1976d2;
