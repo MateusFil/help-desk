@@ -73,7 +73,11 @@ class TicketController {
    */
   async index({ response }) {
     try {
-      const chamados = await Ticket.all()
+      const chamados = await Ticket.query()
+        .join("users as usrC", "tickets.responsavel", "usrC.email")
+        .leftJoin("users as usrA", "tickets.atribuido", "usrA.email")
+        .select("tickets.*", "usrC.nome_completo as nomeC", "usrC.setor as setorC", "usrA.nome_completo as nomeA", "usrA.tipo as tipoA")
+        .fetch()
       return response.status(200).json(chamados)
     } catch (error) {
       console.error('Erro ao listar chamados:', error)
@@ -89,6 +93,9 @@ class TicketController {
         "responsavel",
       ]);
       const chamadosUser = await Ticket.query()
+      .join("users as usrC", "tickets.responsavel", "usrC.email")
+      .leftJoin("users as usrA", "tickets.atribuido", "usrA.email")
+      .select("tickets.*", "usrC.nome_completo", "usrC.setor", "usrA.nome_completo", "usrA.setor")
         .where('responsavel', responsavel)
         .orWhere('atribuido', responsavel)
         .fetch()

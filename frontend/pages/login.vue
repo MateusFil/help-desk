@@ -63,11 +63,11 @@ export default {
 
       // Redirecionar com base no tipo de usuário
       if (userRole === 1) {
-        await this.$router.push('/Dashboard_Admin');
+        await this.$router.push('/dashboard');
       } else if (userRole === 2) {
-        await this.$router.push('/Dashboard_User');
+        await this.$router.push('/dashboard');
       }else if (userRole === 3) {
-        await this.$router.push('/Dashboard_Tecnico');
+        await this.$router.push('/dashboard');
       }
     } catch (error) {
       if (error.response) {
