@@ -60,7 +60,7 @@
               <div class="title_outterChat" v-for="mensagem in mensagens">
                 <div style="display: flex; justify-content: space-between; padding-right: 0px;">
                   <h6 style="margin-left: 0px;">{{ mensagem.responsavel }}</h6>
-                  <h6>{{ mensagem.created_at }}</h6>
+                  <h6>{{ convertDateFormat(mensagem.created_at) }}</h6>
                 </div>
                 <p>{{ mensagem.mensagem }}</p>
               </div>
@@ -195,7 +195,17 @@ export default {
         }
       }
     },
+    convertDateFormat(dateStr) {
+      // Separa a data e a hora
+      const [datePart, timePart] = dateStr.split(' ');
 
+      // Divide a parte da data e a hora
+      const [day, month, year] = datePart.split('-');
+      const [hour, minute] = timePart.split(':');
+
+      // Retorna no novo formato
+      return `${day}/${month}/${year} ${hour}:${minute}`;
+    },
     async submitMensagem() {
       try {
         this.message.id_chamado = this.editChamadoData.id

@@ -75,21 +75,20 @@ export default {
       if (user) {
         if (user.tipo === 1) {
           return [
-            { icon: 'mdi-apps', title: 'Dashboard Admin', to: '/Dashboard_Admin' },
+            { icon: 'mdi-apps', title: 'Dashboard Admin', to: '/dashboard' },
             { icon: 'mdi-account-group', title: 'Gerenciar Usuários', to: '/admin/gerenciar_usuario' },
             { icon: 'mdi-ticket', title: 'Abrir Chamados', to: '/abrir_chamados' },
             { icon: 'mdi-pencil', title: 'Gerenciar Chamados', to: '/acompanhar_chamados' },
-            { icon: 'mdi-pencil', title: 'Teste', to: '/dashboard' },
           ]
         } else if (user.tipo === 2) {
           return [
-            { icon: 'mdi-apps', title: 'Dashboard User', to: '/Dashboard_User' },
+            { icon: 'mdi-apps', title: 'Dashboard User', to: '/dashboard' },
             { icon: 'mdi-ticket', title: 'Abrir Chamados', to: '/abrir_chamados' },
             { icon: 'mdi-pencil', title: 'Editar Chamados', to: '/acompanhar_chamados' },
           ]
         } else if (user.tipo === 3) {
           return [
-            { icon: 'mdi-apps', title: 'Dashboard Tecnico', to: '/Dashboard_Tecnico' },
+            { icon: 'mdi-apps', title: 'Dashboard Tecnico', to: '/dashboard' },
             { icon: 'mdi-ticket', title: 'Abrir Chamados', to: '/abrir_chamados' },
             { icon: 'mdi-pencil', title: 'Editar Chamados', to: '/acompanhar_chamados' },
           ]
