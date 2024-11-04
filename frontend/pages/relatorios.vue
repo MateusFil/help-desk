@@ -2,7 +2,7 @@
     <v-container fluid class="main-container">
       <h1 class="title">Relatórios de Chamados</h1>
   
-      <v-toolbar flat class="no-background">
+      <v-toolbar flat class="no-background" style="padding-right: 0px;">
         <v-text-field
           v-model="search"
           label="Pesquisar"
@@ -20,7 +20,7 @@
           offset-y
         >
           <template v-slot:activator="{ on }">
-            <v-text-field
+            <v-text-field style="padding-top: 21px;"
               v-model="startDate"
               label="Data Inicial"
               prepend-icon="mdi-calendar"
@@ -42,7 +42,7 @@
           offset-y
         >
           <template v-slot:activator="{ on }">
-            <v-text-field
+            <v-text-field style="padding-top: 21px;"
               v-model="endDate"
               label="Data Final"
               prepend-icon="mdi-calendar"
@@ -56,6 +56,26 @@
             @input="endDateMenu = false"
           />
         </v-menu>
+        <template >
+          <v-tooltip bottom>
+            <!-- Definindo o botão como ativador do tooltip -->
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn
+                class="my-button"
+                v-bind="attrs"
+                v-on="on"
+                @click="limparFiltros"
+                color="light-blue"
+                dark
+                style="height: 35px; width: 35px; margin-left: 20px;"
+              >
+                <v-img :src="borrachaImage" contain height="25" width="25"></v-img>
+              </v-btn>
+            </template>
+            <!-- Texto do tooltip que aparece ao dar hover -->
+            <span style="font-size: smaller;">Limpar Filtros</span>
+          </v-tooltip>
+        </template>
       </v-toolbar>
   
       <v-data-table
@@ -68,20 +88,63 @@
           <v-toolbar flat class="header-background">
             <v-toolbar-title class="white--text">Lista de Chamados</v-toolbar-title>
             <v-spacer></v-spacer>
-            <v-btn @click="carregarChamados" color="light-blue" dark>
-              <v-img :src="refreshImage" contain height="30" width="30"></v-img>
-            </v-btn>
+
+            <template>
+              <v-tooltip bottom>
+                <!-- Definindo o botão como ativador do tooltip -->
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn
+                    class="my-button"
+                    v-bind="attrs"
+                    v-on="on"
+                    @click="carregarChamados"
+                    color="light-blue"
+                    dark
+                    style="height: 35px; width: 35px;"
+                  >
+                    <v-img :src="refreshImage" contain height="25" width="25"></v-img>
+                  </v-btn>
+                </template>
+                <!-- Texto do tooltip que aparece ao dar hover -->
+                <span style="font-size: smaller;">Atualizar lista</span>
+              </v-tooltip>
+            </template>
           </v-toolbar>
         </template>
   
         <template v-slot:item.data_criacao="{ item }">
           {{ new Date(item.data_criacao).toLocaleDateString('pt-BR') }}
         </template>
+
+        <template v-slot:footer.prepend>
+          <template>
+          <v-tooltip bottom>
+            <!-- Definindo o botão como ativador do tooltip -->
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn
+                class="my-button"
+                v-bind="attrs"
+                v-on="on"
+                @click="downloadXLSX"
+                color="light-blue"
+                dark
+                style="height: 35px; width: 35px;"
+              >
+                <v-img :src="relatorioImage" contain height="25" width="25"></v-img>
+              </v-btn>
+            </template>
+            <!-- Texto do tooltip que aparece ao dar hover -->
+            <span style="font-size: smaller;">Baixar Relatório</span>
+          </v-tooltip>
+        </template>
+        </template>
       </v-data-table>
     </v-container>
   </template>
   
   <script>
+  import * as XLSX from 'xlsx';
+
   export default {
     data() {
       return {
@@ -99,7 +162,9 @@
         endDateMenu: false,
         startDate: null,
         endDate: null,
-        refreshImage: require('../imagens/Refresh.png')
+        refreshImage: require('../imagens/refresh.png'),
+        borrachaImage: require('../imagens/borracha.png'),
+        relatorioImage: require('../imagens/download.png'),
       };
     },
     computed: {
@@ -129,7 +194,81 @@
         } catch (error) {
           console.error('Erro ao carregar os chamados:', error);
         }
-      }
+      },
+      filtrarChamados() {
+        return this.tickets.filter(ticket => {
+          const matchSearch = ticket.titulo.toLowerCase().includes(this.search.toLowerCase()) ||
+                              ticket.descricao.toLowerCase().includes(this.search.toLowerCase());
+          
+          const ticketDate = new Date(ticket.data_criacao);
+          const startDateMatch = this.startDate ? ticketDate >= new Date(this.startDate) : true;
+          const endDateMatch = this.endDate ? ticketDate <= new Date(this.endDate) : true;
+  
+          return matchSearch && startDateMatch && endDateMatch;
+        });
+      },
+
+      async limparFiltros() {
+        this.startDate = null
+        this.endDate = null
+        this.search = ''
+      },
+
+      parseChamado() {
+            let listaXLSX = []
+
+            const chamados = this.filtrarChamados()
+
+            chamados.forEach(item => {
+              listaXLSX.push({
+                  "idChamado": item.id,
+                  "CriadoPor": item.nomeC,
+                  "AtribuidoPara": item.nomeA,
+                  "Setor": item.setorC,
+                  "HierarquiaAtribuido": item.tipoA,
+                  "DataCriacao": item.data_criacao,
+                  "Categoria": "MP",
+                  "Sla": item.tempo_execucao,
+              })
+            })
+            return listaXLSX
+        },
+
+        downloadXLSX() {
+            const parsedChamado = this.parseChamado()
+            const wb = XLSX.utils.book_new();
+            const ws = XLSX.utils.json_to_sheet(parsedChamado);
+            const name = "Excel_Tickets"
+
+            XLSX.utils.book_append_sheet(wb, ws, 'F_Tickets');
+            XLSX.utils.book_append_sheet(wb, ws, 'D_Setores');
+            XLSX.utils.book_append_sheet(wb, ws, 'D_Hierarquia');
+            XLSX.utils.book_append_sheet(wb, ws, 'D_Categoria');
+            XLSX.utils.book_append_sheet(wb, ws, 'D_SLA');
+
+
+            const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'binary' });
+
+            function s2ab(s) {
+                const buf = new ArrayBuffer(s.length);
+                const view = new Uint8Array(buf);
+                for (let i = 0; i < s.length; i++) view[i] = s.charCodeAt(i) & 0xFF;
+                return buf;
+            }
+
+            const blob = new Blob([s2ab(wbout)], { type: 'application/octet-stream' });
+            const url = window.URL.createObjectURL(blob);
+
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            document.body.appendChild(a);
+            a.href = url;
+            a.download = name + '.xlsx';
+            a.click();
+
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+        },
     },
     mounted() {
       this.carregarChamados();
@@ -143,10 +282,18 @@
   }
   .header-background {
     background-color: #222222 !important;
-    padding: 10px;
   }
   .white--text {
     color: white;
   }
+
+  .my-button:hover {
+  background-color: #0057c1 !important; 
+}
+
+  .my-button:active {
+  background-color: #0057c1 !important; 
+  transform: scale(0.95) !important;
+}
   </style>
   
