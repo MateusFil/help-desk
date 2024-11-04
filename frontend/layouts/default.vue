@@ -1,5 +1,5 @@
 <template>
-  <v-app dark>
+  <v-app>
     <v-navigation-drawer
       v-model="drawer"
       :mini-variant="miniVariant"
@@ -23,7 +23,6 @@
           </v-list-item-content>
         </v-list-item>
 
-        <!-- Adiciona o item de logout -->
         <v-list-item @click="handleLogout">
           <v-list-item-action>
             <v-icon>mdi-logout</v-icon>
@@ -40,6 +39,7 @@
       fixed
       app
     >
+      <v-toolbar-title>{{ title }}</v-toolbar-title>
     </v-app-bar>
     
     <v-main>
@@ -79,6 +79,7 @@ export default {
             { icon: 'mdi-account-group', title: 'Gerenciar Usuários', to: '/admin/gerenciar_usuario' },
             { icon: 'mdi-ticket', title: 'Abrir Chamados', to: '/abrir_chamados' },
             { icon: 'mdi-pencil', title: 'Gerenciar Chamados', to: '/acompanhar_chamados' },
+            { icon: 'mdi-pencil', title: 'Teste Relatorios', to: '/relatorios' }
           ]
         } else if (user.tipo === 2) {
           return [
@@ -112,3 +113,7 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+/* Estilos restaurados ao padrão do Vuetify */
+</style>
