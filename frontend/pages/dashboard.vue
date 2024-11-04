@@ -1,7 +1,5 @@
 <template>
     <v-container fluid>
-        <v-text-field class="barra-filtro" v-model="search" label="Pesquisar" outlined single-line
-            hide-details></v-text-field>
         <v-row>
             <v-col class="coluna">
                 <v-card class="v-titulo">
@@ -81,7 +79,7 @@
 
 <script>
 import axios from 'axios';
-import * as XLSX from 'xlsx';
+
 
 export default {
     data() {
@@ -161,54 +159,6 @@ export default {
             // Retorna no novo formato
             return `${day}/${month}/${year} ${hour}:${minute}`;
         },
-        parseChamado() {
-            let listaXLSX = []
-
-            this.chamados.forEach(item => {
-                listaXLSX.push({
-                    "idChamado": item.id,
-                    "CriadoPor": item.nomeC,
-                    "AtribuidoPara": item.nomeA,
-                    "Setor": item.setorC,
-                    "HierarquiaAtribuido": item.tipoA,
-                    "DataCriacao": item.data_criacao,
-                    "Categoria": "MP",
-                    "Sla": item.tempo_execucao,
-                })
-            })
-            return listaXLSX
-        },
-
-        downloadXLSX() {
-            const parsedChamado = this.parseChamado()
-            const wb = XLSX.utils.book_new();
-            const ws = XLSX.utils.json_to_sheet(parsedChamado);
-            const name = "F_Tickets"
-
-            XLSX.utils.book_append_sheet(wb, ws, 'Planilha');
-
-            const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'binary' });
-
-            function s2ab(s) {
-                const buf = new ArrayBuffer(s.length);
-                const view = new Uint8Array(buf);
-                for (let i = 0; i < s.length; i++) view[i] = s.charCodeAt(i) & 0xFF;
-                return buf;
-            }
-
-            const blob = new Blob([s2ab(wbout)], { type: 'application/octet-stream' });
-            const url = window.URL.createObjectURL(blob);
-
-            const a = document.createElement('a');
-            a.style.display = 'none';
-            document.body.appendChild(a);
-            a.href = url;
-            a.download = name + '.xlsx';
-            a.click();
-
-            window.URL.revokeObjectURL(url);
-            document.body.removeChild(a);
-        }
     }
 }
     ;
