@@ -112,24 +112,17 @@ export default {
                 let url = ''
                 let objRequest = {}
 
-                if (this.userRole == 1) {
-                    url = 'http://127.0.0.1:3333/admin/acompanhar_chamados'
-                    objRequest = {
-                        headers: {
-                            Authorization: `Bearer ${localStorage.getItem('token')}`,
-                        }
-                    }
-                } else {
-                    url = 'http://127.0.0.1:3333/user/acompanhar_chamados'
-                    objRequest = {
-                        headers: {
-                            Authorization: `Bearer ${localStorage.getItem('token')}`,
-                        },
-                        params: {
-                            responsavel: this.emailLogado
-                        }
+                url = 'http://127.0.0.1:3333/acompanhar_chamados'
+                objRequest = {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('token')}`,
+                    },
+                    params: {
+                        responsavel: this.emailLogado,
+                        tipo: this.userRole
                     }
                 }
+
                 const response = await axios.get(url, objRequest);
                 const chamados = response.data;
 
