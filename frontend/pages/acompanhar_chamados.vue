@@ -118,22 +118,14 @@ export default {
         let url = ''
         let objRequest = {}
 
-        if (this.userRole == 1 || this.userRole == 3) {
-          url = 'http://127.0.0.1:3333/admin/acompanhar_chamados'
-          objRequest = {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem('token')}`,
-            }
-          }
-        } else {
-          url = 'http://127.0.0.1:3333/user/acompanhar_chamados'
-          objRequest = {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem('token')}`,
-            },
-            params: {
-              responsavel: this.emailLogado
-            }
+        url = 'http://127.0.0.1:3333/acompanhar_chamados'
+        objRequest = {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+          params: {
+            responsavel: this.emailLogado,
+            tipo: this.userRole,
           }
         }
 
@@ -175,7 +167,6 @@ export default {
       this.dialog = true;
     },
     async assumirChamado() {
-      //console.log(this.$store.state.user.email)
       if (confirm('Tem certeza que deseja assumir esse chamado?')) {
         try {
           await axios.put(

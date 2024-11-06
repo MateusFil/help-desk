@@ -24,7 +24,6 @@ export const actions = {
         throw new Error('Token não encontrado.');
       }
 
-      console.log('Token ao realizar logout:', token); // Verificação
 
       await this.$axios.$post('/logout', {}, {
         headers: {
@@ -36,7 +35,6 @@ export const actions = {
       await commit('LOGOUT');
       localStorage.removeItem('token');
       
-      console.log('Token removido e estado limpo.');
       
       // Redirecionar para a tela de login
       window.location.href = '/login';

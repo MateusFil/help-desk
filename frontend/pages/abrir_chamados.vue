@@ -87,7 +87,6 @@ export default {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
           },
         });
-        console.log('Usuários carregados:', response.data); // Verifique o formato dos dados
         this.usuarios = response.data; 
       } catch (error) {
         console.error('Erro ao carregar usuários:', error);
