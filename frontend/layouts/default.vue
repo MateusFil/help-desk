@@ -71,7 +71,7 @@ export default {
   },
   computed: {
     menuItems() {
-      const user = this.$store.state.user
+      const user = this.$store.state.user;
       if (user) {
         if (user.tipo === 1) {
           return [
@@ -105,9 +105,9 @@ export default {
   methods: {
     async handleLogout() {
       try {
-        await this.$store.dispatch('logout')
+        await this.$store.dispatch('logout');
       } catch (error) {
-        console.error('Erro ao realizar logout:', error)
+        console.error('Erro ao realizar logout:', error);
       }
     }
   }
