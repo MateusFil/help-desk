@@ -38,9 +38,22 @@ export const actions = {
   async login({ commit }, user) {
     // Salve o cookie e localStorage
     if (process.client) {
-      Cookies.set('user_logged_in', 'true', { expires: 7 }); // Cookie para manter o login por 7 dias
-      localStorage.setItem('user', JSON.stringify(user)); // Salve o usuário no localStorage
-      localStorage.setItem('token', user.token); // Salve o token no localStorage
+      const sessionTimeoutInMinutes = 60; // Tempo de expiração em minutos (1 hora)
+
+      // Definir o cookie para expirar em 1 hora
+      const expireTime = new Date(new Date().getTime() + 60 * 60 * 1000); // 1 hora a partir de agora
+
+      // Salvar o cookie com as configurações de segurança
+      Cookies.set('user_logged_in', 'true', {
+        expires: expireTime,
+        secure: process.env.NODE_ENV === 'production', // 'secure' assegura que o cookie só seja enviado via HTTPS
+        sameSite: 'Strict', // 'Strict' para maior segurança
+        httpOnly: true, // 'httpOnly' evita que o cookie seja acessado via JavaScript
+      });
+
+      // Salve o usuário e token no localStorage
+      localStorage.setItem('user', JSON.stringify(user));
+      localStorage.setItem('token', user.token);
     }
 
     commit('SET_USER', user);
@@ -50,11 +63,13 @@ export const actions = {
   logout({ commit }) {
     if (process.client) {
       // Limpar cookies e localStorage ao deslogar
-      Cookies.remove('user_logged_in');
+      Cookies.remove('user_logged_in', { secure: process.env.NODE_ENV === 'production', sameSite: 'Strict' });
       localStorage.removeItem('user');
       localStorage.removeItem('token');
     }
 
     commit('LOGOUT');
+    // Forçar o recarregamento da página
+    location.reload(); // Recarrega a página e limpa o estado
   }
 };

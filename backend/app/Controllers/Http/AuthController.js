@@ -27,7 +27,7 @@ class AuthController {
       /*if (!user) {
         user = await UserAdmin.query().where('email', email).first();
       }*/
-
+        
       if (!user || !(await Hash.verify(password, user.password))) {
         return response.status(401).json({ error: 'Usuário ou senha incorretos' });
       }
@@ -35,15 +35,19 @@ class AuthController {
       const token = jwt.sign({ userId: user.id, email: user.email, tipo: user.tipo }, 'your_secret_key', { expiresIn: '1h' });
        
        // Retorne o token, o tipo de usuário e uma mensagem de sucesso
+       
       return response.json({
         message: 'Login realizado com sucesso!',
+        
+        
         token: token,
         user: {
           id: user.id,
           email: user.email,
           tipo: user.tipo
         }
-      });
+        
+      }); 
     } catch (error) {
       console.error('Erro ao fazer login:', error);
       return response.status(500).json({ error: 'Erro ao fazer login' });
@@ -55,6 +59,7 @@ class AuthController {
   */
   async logout({ request, response, auth }) {
     const token = request.header('Authorization').replace('Bearer ', '')
+    
     
     try {
       // Adiciona o token à lista negra
