@@ -1,46 +1,60 @@
+import Cookies from 'js-cookie';
+
 export const state = () => ({
   user: null,
   token: null,
-})
+});
 
 export const mutations = {
   SET_USER(state, user) {
-    state.user = user
+    state.user = user;
   },
   SET_TOKEN(state, token) {
-    state.token = token
+    state.token = token;
   },
   LOGOUT(state) {
-    state.user = null
-    state.token = null
+    state.user = null;
+    state.token = null;
   }
-}
+};
 
 export const actions = {
-  async logout({ commit }) {
-    try {
+  // Essa ação será chamada automaticamente quando a página for carregada
+  async nuxtServerInit({ commit }) {
+    // Verificar no client-side se há cookies ou localStorage
+    if (process.client) {
+      const userLoggedIn = Cookies.get('user_logged_in');
+      const user = localStorage.getItem('user');
       const token = localStorage.getItem('token');
-      if (!token) {
-        throw new Error('Token não encontrado.');
+
+      if (userLoggedIn && user && token) {
+        // Se estiver logado, restaura o estado do usuário e token
+        commit('SET_USER', JSON.parse(user)); // Converte o usuário de volta para um objeto
+        commit('SET_TOKEN', token); // Restaura o token
       }
-
-
-      await this.$axios.$post('/logout', {}, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      localStorage.clear();
-      // Limpar estado
-      await commit('LOGOUT');
-      localStorage.removeItem('token');
-      
-      
-      // Redirecionar para a tela de login
-      window.location.href = '/login';
-      
-    } catch (error) {
-      console.error('Erro ao realizar logout:', error);
     }
   },
-}
+
+  async login({ commit }, user) {
+    // Salve o cookie e localStorage
+    if (process.client) {
+      Cookies.set('user_logged_in', 'true', { expires: 7 }); // Cookie para manter o login por 7 dias
+      localStorage.setItem('user', JSON.stringify(user)); // Salve o usuário no localStorage
+      localStorage.setItem('token', user.token); // Salve o token no localStorage
+    }
+
+    commit('SET_USER', user);
+    commit('SET_TOKEN', user.token);
+  },
+
+  logout({ commit }) {
+    if (process.client) {
+      // Limpar cookies e localStorage ao deslogar
+      Cookies.remove('user_logged_in');
+      localStorage.removeItem('user');
+      localStorage.removeItem('token');
+    }
+
+    commit('LOGOUT');
+  }
+};

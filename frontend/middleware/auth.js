@@ -1,16 +1,13 @@
 // middleware/auth.js
+import Cookies from 'js-cookie';
 
-export default function ({ store, redirect, route }) {
-  const user = store.state.user;
-
-  // Páginas que não precisam de autenticação
-  const publicPages = ['/', '/login'];
-
-  // Verifica se a página é pública ou não
-  const isPublicPage = publicPages.includes(route.path);
-
-  // Se o usuário não estiver logado e a página não for pública, redireciona para o login
-  if (!user && !isPublicPage) {
+export default function ({ store, redirect }) {
+  const userLoggedIn = Cookies.get('user_logged_in');
+  
+  // Se o cookie não estiver presente, redireciona para o login
+  if (!userLoggedIn) {
     return redirect('/login');
   }
+
+  // Caso o cookie esteja presente, mantém o usuário logado
 }
