@@ -91,9 +91,12 @@ class TicketController {
         .leftJoin("users as usrA", "tickets.atribuido", "usrA.email")
         .select(
           "tickets.*",
+          "usrC.email as emailC",
           "usrC.nome_completo as nomeC",
           "usrC.setor as setorC",
           "usrC.tipo as tipoC",
+//        -------------------------------
+          "usrA.email as emailA",
           "usrA.nome_completo as nomeA",
           "usrA.setor as setorA",
           "usrA.tipo as tipoA",
