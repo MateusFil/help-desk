@@ -90,6 +90,7 @@ export default {
   data() {
     return {
       tickets: [],
+      users: [],
       headers: [
         { text: 'Título', value: 'titulo' },
         { text: 'Descrição', value: 'descricao' },
@@ -146,6 +147,21 @@ export default {
         console.error('Erro ao carregar chamados:', error);
       }
     },
+
+    async listar_usuarios() {
+      try {
+        const response = await axios.get('http://127.0.0.1:3333/listar_usuarios', {
+          headers: {
+            Authorization: `Bearer ${this.token}`,
+          },
+        });
+        this.users = response.data;
+      } catch (error) {
+        console.error('List failed:', error.message);
+      }
+    },
+
+
     filtrarChamados() {
       return this.tickets.filter(ticket => {
         const matchSearch = ticket.titulo.toLowerCase().includes(this.search.toLowerCase()) ||
@@ -166,37 +182,77 @@ export default {
     },
 
     async parseChamado() {
-      let listaXLSX = []
+      let F_Chamados = []
+      let D_Colaborador = []
+
 
       const chamados = await this.filtrarChamados();
 
       chamados.forEach(item => {
-        listaXLSX.push({
+        F_Chamados.push({
           "idChamado": item.id,
-          "CriadoPor": item.nomeC,
-          "AtribuidoPara": item.nomeA,
-          "Setor": item.setorC,
-          "HierarquiaCriado": item.tipoC,
-          "HierarquiaAtribuido": item.tipoA,
+          "CodigoCriador": item.emailC,
+          "CodigoAtribuido": item.emailA,
           "DataCriacao": item.data_criacao,
-          "Categoria": "MP",
-          "Sla": item.tempo_execucao,
+          "CodigoSLA": item.tempo_execucao,
         })
-      })
-      return listaXLSX
+      });
+
+      this.users.forEach(item => {
+        D_Colaborador.push({
+          "CodigoCadastro": item.email,
+          "NomeCompleto": item.nome,
+          "Setor": item.setor,
+          "Hierarquia": item.tipo,
+        })
+      });
+
+      const D_Setor = [
+      { Setor: "TI", Nomenclatura: "Tecnologia da informação" },
+      { Setor: "RH", Nomenclatura: "Recursos Humanos" },
+      { Setor: "ADM", Nomenclatura: "Administração" },
+      { Setor: "FNC", Nomenclatura: "Financeiro" },
+      { Setor: "ESTQ", Nomenclatura: "Estoque" },
+      { Setor: "PRD", Nomenclatura: "Produção" }
+      ];
+
+      const D_Hierarquia = [
+      { Hierarquia: 1, Nomenclatura: "Administrador" },
+      { Hierarquia: 2, Nomenclatura: "Usuário Comum" },
+      { Hierarquia: 3, Nomenclatura: "Técnico de TI" }
+      ];
+
+      const D_CodigoSLA = [
+      { CodigoSLA: "BP", Nomenclatura: "Baixa prioridade", TempoEstimado: "3 horas" },
+      { CodigoSLA: "MP", Nomenclatura: "Média prioridade", TempoEstimado: "5 horas" },
+      { CodigoSLA: "AP", Nomenclatura: "Alta prioridade", TempoEstimado: "8 horas" }
+      ];
+
+      return {
+        F_Chamados,
+        D_Colaborador,
+        D_Setor,
+        D_Hierarquia,
+        D_CodigoSLA
+      };
     },
 
     async downloadXLSX() {
       const parsedChamado = await this.parseChamado()
       const wb = XLSX.utils.book_new();
-      const ws = XLSX.utils.json_to_sheet(parsedChamado);
       const name = "Excel_Tickets"
 
-      XLSX.utils.book_append_sheet(wb, ws, 'F_Tickets');
-      XLSX.utils.book_append_sheet(wb, ws, 'D_Setores');
-      XLSX.utils.book_append_sheet(wb, ws, 'D_Hierarquia');
-      XLSX.utils.book_append_sheet(wb, ws, 'D_Categoria');
-      XLSX.utils.book_append_sheet(wb, ws, 'D_SLA');
+      const fchamados = XLSX.utils.json_to_sheet(parsedChamado.F_Chamados);
+      const dcolaborador = XLSX.utils.json_to_sheet(parsedChamado.D_Colaborador);
+      const dsetor = XLSX.utils.json_to_sheet(parsedChamado.D_Setor);
+      const dhierarquia = XLSX.utils.json_to_sheet(parsedChamado.D_Hierarquia);
+      const dcodigosla = XLSX.utils.json_to_sheet(parsedChamado.D_CodigoSLA);
+
+      XLSX.utils.book_append_sheet(wb, fchamados, 'F_Tickets');
+      XLSX.utils.book_append_sheet(wb, dcolaborador, 'D_Colaborador');
+      XLSX.utils.book_append_sheet(wb, dsetor, 'D_Setor');
+      XLSX.utils.book_append_sheet(wb, dhierarquia, 'D_Hierarquia');
+      XLSX.utils.book_append_sheet(wb, dcodigosla, 'D_CodigoSLA');
 
 
       const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'binary' });
@@ -224,6 +280,7 @@ export default {
   },
   async created() {
     this.carregarChamados();
+    this.listar_usuarios();
   }
 };
 </script>
