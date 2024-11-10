@@ -91,10 +91,13 @@ class TicketController {
         .leftJoin("users as usrA", "tickets.atribuido", "usrA.email")
         .select(
           "tickets.*",
-          "usrC.nome_completo",
-          "usrC.setor",
-          "usrA.nome_completo",
-          "usrA.setor"
+          "usrC.nome_completo as nomeC",
+          "usrC.setor as setorC",
+          "usrC.tipo as tipoC",
+          "usrA.nome_completo as nomeA",
+          "usrA.setor as setorA",
+          "usrA.tipo as tipoA",
+
         );
 
       if (tipo === "2") {
@@ -106,7 +109,7 @@ class TicketController {
           .orWhere("atribuido", null);
       }
 
-      const resposta = await chamadosUser.fetch();
+      const resposta = (await chamadosUser.fetch());
 
       return response.status(200).json(resposta);
     } catch (error) {

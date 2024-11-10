@@ -83,6 +83,7 @@
 </template>
 
 <script>
+import axios from 'axios';
 import * as XLSX from 'xlsx';
 
 export default {
@@ -98,6 +99,8 @@ export default {
         { text: 'Prioridade', value: 'prioridade' }
       ],
       search: '',
+      userRole: this.$store.state.user.tipo,
+      emailLogado: this.$store.state.user.email,
       startDateMenu: false,
       endDateMenu: false,
       startDate: null,
@@ -124,6 +127,9 @@ export default {
   methods: {
     async carregarChamados() {
       try {
+        let url = ''
+        let objRequest = {}
+
         url = 'http://127.0.0.1:3333/acompanhar_chamados'
         objRequest = {
           headers: {
@@ -131,12 +137,13 @@ export default {
           },
           params: {
             responsavel: this.emailLogado,
-            tipo: this.userRole
+            tipo: this.userRole,
           }
         }
+        const response = await axios.get(url, objRequest);
         this.tickets = response.data;
       } catch (error) {
-        console.error('Erro ao carregar os chamados:', error);
+        console.error('Erro ao carregar chamados:', error);
       }
     },
     filtrarChamados() {
@@ -158,10 +165,10 @@ export default {
       this.search = ''
     },
 
-    parseChamado() {
+    async parseChamado() {
       let listaXLSX = []
 
-      const chamados = this.filtrarChamados()
+      const chamados = await this.filtrarChamados();
 
       chamados.forEach(item => {
         listaXLSX.push({
@@ -169,6 +176,7 @@ export default {
           "CriadoPor": item.nomeC,
           "AtribuidoPara": item.nomeA,
           "Setor": item.setorC,
+          "HierarquiaCriado": item.tipoC,
           "HierarquiaAtribuido": item.tipoA,
           "DataCriacao": item.data_criacao,
           "Categoria": "MP",
@@ -178,8 +186,8 @@ export default {
       return listaXLSX
     },
 
-    downloadXLSX() {
-      const parsedChamado = this.parseChamado()
+    async downloadXLSX() {
+      const parsedChamado = await this.parseChamado()
       const wb = XLSX.utils.book_new();
       const ws = XLSX.utils.json_to_sheet(parsedChamado);
       const name = "Excel_Tickets"
@@ -214,7 +222,7 @@ export default {
       document.body.removeChild(a);
     },
   },
-  mounted() {
+  async created() {
     this.carregarChamados();
   }
 };
