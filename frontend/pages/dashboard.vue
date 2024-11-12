@@ -11,7 +11,6 @@
                             <h6 style="margin-left: 0px;">{{ ticket.responsavel }}</h6>
                             <h6>{{ convertDateFormat(ticket.created_at) }}</h6>
                         </div>
-
                         <v-card-title>{{ ticket.titulo }}</v-card-title>
                     </v-card>
                 </v-card>
@@ -46,7 +45,6 @@
             </v-col>
         </v-row>
 
-
         <v-dialog v-model="dialog" max-width="600px">
             <v-card>
                 <v-card-title>
@@ -56,15 +54,11 @@
                     <v-list-item>
                         <v-list-item-content>
                             <v-list-item-title>Título: {{ ticketDetails.titulo }}</v-list-item-title>
-                            <v-list-item-subtitle>Descrição: {{ ticketDetails.descricao
-                                }}</v-list-item-subtitle>
-                            <v-list-item-subtitle>Responsável: {{ ticketDetails.responsavel
-                                }}</v-list-item-subtitle>
-                            <v-list-item-subtitle>Atribuído: {{ ticketDetails.atribuido
-                                }}</v-list-item-subtitle>
+                            <v-list-item-subtitle>Descrição: {{ ticketDetails.descricao }}</v-list-item-subtitle>
+                            <v-list-item-subtitle>Responsável: {{ ticketDetails.responsavel }}</v-list-item-subtitle>
+                            <v-list-item-subtitle>Atribuído: {{ ticketDetails.atribuido }}</v-list-item-subtitle>
                             <v-list-item-subtitle>Status: {{ ticketDetails.status }}</v-list-item-subtitle>
-                            <v-list-item-subtitle>Tempo de Execução: {{ ticketDetails.tempo_execucao }}
-                                horas</v-list-item-subtitle>
+                            <v-list-item-subtitle>Tempo de Execução: {{ ticketDetails.tempo_execucao }} horas</v-list-item-subtitle>
                         </v-list-item-content>
                     </v-list-item>
                 </v-card-text>
@@ -74,12 +68,10 @@
             </v-card>
         </v-dialog>
     </v-container>
-
 </template>
 
 <script>
 import axios from 'axios';
-
 
 export default {
     data() {
@@ -100,7 +92,6 @@ export default {
                 { text: 'Responsável', value: 'responsavel' },
                 { text: 'Ações', value: 'actions', sortable: false },
             ],
-            mostrarAviso: false, // Adicionado para controlar o aviso
         };
     },
     async created() {
@@ -127,12 +118,9 @@ export default {
                 const chamados = response.data;
 
                 this.ticketBacklog = chamados.filter((chamado) => chamado['status'] == 'Backlog');
-
                 this.ticketAndamento = chamados.filter((chamado) => chamado['status'] == 'Andamento');
-
                 this.ticketFinalizado = chamados.filter((chamado) => chamado['status'] == 'Finalizado');
-
-                this.chamados = chamados
+                this.chamados = chamados;
             } catch (error) {
                 console.error('Erro ao carregar chamados:', error);
             }
@@ -142,19 +130,13 @@ export default {
             this.dialog = true;
         },
         convertDateFormat(dateStr) {
-            // Separa a data e a hora
             const [datePart, timePart] = dateStr.split(' ');
-
-            // Divide a parte da data e a hora
             const [day, month, year] = datePart.split('-');
             const [hour, minute] = timePart.split(':');
-
-            // Retorna no novo formato
             return `${day}/${month}/${year} ${hour}:${minute}`;
         },
     }
-}
-    ;
+};
 </script>
 
 <style scoped>
@@ -184,7 +166,6 @@ export default {
 
 .coluna {
     height: 750px;
-
 }
 
 .card-tickets {
@@ -193,6 +174,5 @@ export default {
     box-shadow: 5px 5px 10px 10px #464646;
     background-color: #2e2e2e;
     margin: 2px;
-
 }
 </style>
