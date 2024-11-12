@@ -54,6 +54,20 @@
     >
       <span>&copy; {{ new Date().getFullYear() }}</span>
     </v-footer>
+
+    <!-- Dialogo de confirmação de inatividade -->
+    <v-dialog v-model="inatividadeDialog" max-width="600px">
+      <v-card>
+        <v-card-title class="headline">Sessão Expirada</v-card-title>
+        <v-card-text>
+          <span>Você foi inativo por mais de 5 minutos. Deseja continuar?</span>
+        </v-card-text>
+        <v-card-actions>
+          <v-btn color="green" @click="continuarSessao">Continuar</v-btn>
+          <v-btn color="red" @click="fazerLogout">Fazer Logout</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-app>
 </template>
 
@@ -67,6 +81,9 @@ export default {
       fixed: false,
       miniVariant: false,
       title: 'Vuetify.js',
+      inatividadeDialog: false,
+      inatividadeTimeout: null,
+      fecharDialogTimeout: null, // Novo timeout para fechamento automático do diálogo
     }
   },
   computed: {
@@ -102,17 +119,56 @@ export default {
       }
     }
   },
-  methods: {
+  created() {
+  if (process.client) {
+    this.iniciarMonitoramentoInatividade();
+  }
+},
+methods: {
+    iniciarMonitoramentoInatividade() {
+      document.body.addEventListener('mousemove', this.resetarTempoInatividade);
+      document.body.addEventListener('keypress', this.resetarTempoInatividade);
+      this.iniciarTimeoutInatividade();
+    },
+    resetarTempoInatividade() {
+      clearTimeout(this.inatividadeTimeout);
+      this.iniciarTimeoutInatividade();
+    },
+    iniciarTimeoutInatividade() {
+      this.inatividadeTimeout = setTimeout(() => {
+        this.inatividadeDialog = true;
+        this.iniciarFecharDialogTimeout();
+      }, 1 * 60 * 1000); // 5 minutos de inatividade
+    },
+    iniciarFecharDialogTimeout() {
+      this.fecharDialogTimeout = setTimeout(() => {
+        this.fazerLogout();
+      }, 5000); // 5 segundos para fechamento automático
+    },
+    continuarSessao() {
+      this.inatividadeDialog = false;
+      clearTimeout(this.fecharDialogTimeout);
+      this.resetarTempoInatividade();
+    },
     async handleLogout() {
       try {
         await this.$store.dispatch('logout');
+        this.$router.push({ name: 'login' });
       } catch (error) {
         console.error('Erro ao realizar logout:', error);
       }
-    }
-  }
+    },
+    fazerLogout() {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      this.$router.push({ name: 'login' });
+      this.inatividadeDialog = false;
+      clearTimeout(this.fecharDialogTimeout);
+      window.location.reload(); // Atualiza a página após o logout automático
+    },
+  },
 }
-</script>
+  </script>
 
 <style scoped>
 /* Estilos restaurados ao padrão do Vuetify */
