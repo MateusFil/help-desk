@@ -94,7 +94,7 @@ export default {
       dialog: false,
       valid: false,
       editChamadoData: {},
-      statusOptions: ['Backlog', 'Em Andamento', 'Em Produção'],
+      statusOptions: ['Backlog', 'Andamento', 'Finalizado'],
       prioridadeOptions: [
         { text: 'Baixa', value: 'BP' },
         { text: 'Média', value: 'MP' },

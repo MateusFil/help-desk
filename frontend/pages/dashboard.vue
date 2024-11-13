@@ -58,7 +58,7 @@
                             <v-list-item-subtitle>Responsável: {{ ticketDetails.responsavel }}</v-list-item-subtitle>
                             <v-list-item-subtitle>Atribuído: {{ ticketDetails.atribuido }}</v-list-item-subtitle>
                             <v-list-item-subtitle>Status: {{ ticketDetails.status }}</v-list-item-subtitle>
-                            <v-list-item-subtitle>Tempo de Execução: {{ ticketDetails.tempo_execucao }} horas</v-list-item-subtitle>
+                            <v-list-item-subtitle>Prioridade: {{codPrioridade }} prioridade</v-list-item-subtitle>
                         </v-list-item-content>
                     </v-list-item>
                 </v-card-text>
@@ -82,6 +82,12 @@ export default {
             userRole: this.$store.state.user.tipo,
             emailLogado: this.$store.state.user.email,
             setorLogado: this.$store.state.user.tipo,
+            prioridadeOptions : {
+            'BP': 'Baixa',
+            'MP': 'Média',
+            'AP': 'Alta',
+            },
+            codPrioridade : '',
             chamados: [],
             ticketDetails: {},
             ticketBacklog: [],
@@ -129,6 +135,7 @@ export default {
         abrirDetalhes(ticket) {
             this.ticketDetails = ticket;
             this.dialog = true;
+            this.codPrioridade = this.prioridadeOptions[this.ticketDetails.prioridade];
         },
         convertDateFormat(dateStr) {
             const [datePart, timePart] = dateStr.split(' ');
