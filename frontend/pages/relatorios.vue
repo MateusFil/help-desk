@@ -90,7 +90,7 @@ export default {
   data() {
     return {
       tickets: [],
-      users: [],
+      usuarios: [],
       headers: [
         { text: 'Título', value: 'titulo' },
         { text: 'Descrição', value: 'descricao' },
@@ -155,7 +155,7 @@ export default {
             Authorization: `Bearer ${this.token}`,
           },
         });
-        this.users = response.data;
+        this.usuarios = response.data
       } catch (error) {
         console.error('List failed:', error.message);
       }
@@ -198,10 +198,10 @@ export default {
         })
       });
 
-      this.users.forEach(item => {
+      this.usuarios.forEach(item => {
         D_Colaborador.push({
           "CodigoCadastro": item.email,
-          "NomeCompleto": item.nome,
+          "NomeCompleto": item.nome_completo,
           "Setor": item.setor,
           "Hierarquia": item.tipo,
         })
