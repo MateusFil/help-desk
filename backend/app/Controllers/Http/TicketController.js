@@ -131,13 +131,12 @@ class TicketController {
 
       if (!ticket) {
         return response.status(404).json({ error: "Chamado não encontrado" });
-      }
-      r;
+      };
       const data = request.only([
         "titulo",
         "descricao",
         "atribuido",
-        "tempo_execucao",
+        "prioridade",
         "status",
       ]);
       ticket.merge(data);
