@@ -1,4 +1,3 @@
-
 <template>
   <div class="abrir-chamado">
     <h2>Abrir Chamado</h2>
@@ -29,13 +28,14 @@
         required
         readonly
       />
-      <v-text-field v-if="userRole === 1 || userRole === 3"
-        label="Tempo de execução (Horas)"
-        v-model="chamado.tempo_execucao"
-        :rules="[rules.required, rules.number]"
-        required
-        type="number"
-      />
+      <!-- Remover o campo de 'Tempo de execução' -->
+      <v-select v-if="userRole === 1 || userRole === 3"
+            label="Prioridade"
+            :items="prioridadeOptions"
+            v-model="chamado.prioridade"
+            :rules="[rules.required]"
+            required
+          />
       <v-select v-if="userRole === 1 || userRole === 3"
         label="Status"
         :items="statusOptions"
@@ -51,21 +51,19 @@
 <script>
 import axios from 'axios';
 
-
-
 export default {
   data() {
-    
     return {
       chamado: {
         titulo: '',
         descricao: '',
         atribuido_para: '',  // E-mail do usuário atribuído
         responsavel: '',    // E-mail do responsável, preenchido automaticamente
-        tempo_execucao: '0',
+        prioridade: '',     // Novo campo de prioridade
         status: 'Backlog',
       },
       usuarios: [],
+      prioridadeOptions: ['Baixa', 'Média', 'Alta'],  // Opções para prioridade
       userRole: this.$store.state.user.tipo, 
       statusOptions: ['Backlog', 'Andamento', 'Finalizado'],
       valid: false,
@@ -104,6 +102,18 @@ export default {
     async submitChamado() {
       if (this.$refs.form.validate()) {
         try {
+          // Mapeando a prioridade para os valores que o back-end espera
+          const prioridadeMap = {
+            'Baixa': 'BP',
+            'Média': 'MP',
+            'Alta': 'AP',
+          };
+
+          // Garantir que a prioridade seja mapeada corretamente
+          if (this.chamado.prioridade) {
+            this.chamado.prioridade = prioridadeMap[this.chamado.prioridade];
+          }
+
           const response = await axios.post('http://127.0.0.1:3333/abrir_chamado', this.chamado, {
             headers: {
               Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -116,12 +126,11 @@ export default {
             descricao: '',
             atribuido_para: '',
             responsavel: this.chamado.responsavel,
-            tempo_execucao: '',
+            prioridade: '',  // Limpar o campo de prioridade
             status: '',
           };
         } catch (error) {
           console.error('Erro ao abrir chamado:', error.response ? error.response.data : error.message);
-        
           alert(`Erro ao abrir chamado: ${error.response ? error.response.data.error : error.message}`);
         }
       }

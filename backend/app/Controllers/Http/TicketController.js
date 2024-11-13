@@ -34,51 +34,50 @@ class TicketController {
   async store({ request, response }) {
     try {
       const verified = await this.verificarToken(request);
-
+  
       const {
         titulo,
         descricao,
         atribuido_para,
         responsavel,
-        tempo_execucao,
+        prioridade,  // Substituindo 'tempo_execucao' por 'prioridade'
         status,
       } = request.only([
         "titulo",
         "descricao",
         "atribuido_para",
         "responsavel",
-        "tempo_execucao",
+        "prioridade",  // Aqui também atualizamos o campo para 'prioridade'
         "status",
       ]);
+  
 
       // Verifica se o usuário atribuído existe
       let usuarioAtribuido = await User.findBy("email", atribuido_para);
-      /*if (!usuarioAtribuido) {
-        usuarioAtribuido = await UserAdmin.findBy('email', atribuido_para)
-      }*/
-
       if (!usuarioAtribuido) {
-        usuarioAtribuido = "";
+        // Se o usuário não for encontrado, você pode optar por uma estratégia, como retornar um erro ou deixar em branco
+        usuarioAtribuido = "";  // Ou pode lançar um erro, dependendo da lógica de negócio
       }
+  
+      // Cria o ticket com a prioridade e o usuário atribuído
 
-      // Cria o ticket com o responsável e o usuário atribuído
       const chamado = await Ticket.create({
         titulo,
         descricao,
         data_criacao: new Date(), // Define a data atual
-        responsavel, // Email do responsável enviado pelo frontend
+        responsavel,  // Email do responsável
         atribuido: usuarioAtribuido.email, // Email do usuário ou admin atribuído ao ticket
-        tempo_execucao,
+        prioridade,  // Novo campo prioridade
         status,
       });
-
+  
       return response.status(201).json(chamado);
     } catch (error) {
       console.error("Erro ao criar ticket:", error);
       return response.status(400).json({ error: error.message });
     }
   }
-
+  
   /**
    * Listar todos os chamados (somente administradores)
    */
@@ -86,6 +85,9 @@ class TicketController {
   async index({ request, response }) {
     try {
       const { responsavel, tipo } = request.only(["responsavel", "tipo"]);
+      console.log("Responsável:", responsavel);
+      console.log("Tipo:", tipo);
+  
       const chamadosUser = Ticket.query()
         .join("users as usrC", "tickets.responsavel", "usrC.email")
         .leftJoin("users as usrA", "tickets.atribuido", "usrA.email")
@@ -95,14 +97,12 @@ class TicketController {
           "usrC.nome_completo as nomeC",
           "usrC.setor as setorC",
           "usrC.tipo as tipoC",
-//        -------------------------------
           "usrA.email as emailA",
           "usrA.nome_completo as nomeA",
           "usrA.setor as setorA",
-          "usrA.tipo as tipoA",
-
+          "usrA.tipo as tipoA"
         );
-
+  
       if (tipo === "2") {
         chamadosUser.where("responsavel", responsavel);
       } else if (tipo === "3") {
@@ -111,16 +111,16 @@ class TicketController {
           .orWhere("atribuido", responsavel)
           .orWhere("atribuido", null);
       }
-
-      const resposta = (await chamadosUser.fetch());
-
+  
+      const resposta = await chamadosUser.fetch();
+      console.log("Chamados encontrados:", resposta); // Adicionado log para ver os dados
       return response.status(200).json(resposta);
     } catch (error) {
-      console.error("Erro ao listar mensagens no chamado:", error);
+      console.error("Erro ao listar chamados:", error.message);
       return response.status(400).json({ error: error.message });
     }
   }
-
+  
   /**
    * Editar um chamado por ID
    */
