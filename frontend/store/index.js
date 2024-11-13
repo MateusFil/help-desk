@@ -15,6 +15,11 @@ export const mutations = {
   LOGOUT(state) {
     state.user = null;
     state.token = null;
+  },
+  
+  CLEAR_USER_DATA(state) {
+    state.user = null;
+    state.token = null;
   }
 };
 

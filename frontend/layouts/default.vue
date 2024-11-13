@@ -152,12 +152,24 @@ methods: {
     },
     async handleLogout() {
       try {
-        await this.$store.dispatch('logout');
+        console.log('Iniciando processo de logout');
+        // Limpeza do localStorage e do token
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        console.log('LocalStorage limpo com sucesso');
+        
+        // Chama a mutation para limpar o Vuex
+        this.$store.commit('CLEAR_USER_DATA');
+        console.log('Dados do Vuex limpos com sucesso');
+
+        // Redirecionamento direto para a página de login
         this.$router.push({ name: 'login' });
+        console.log('Redirecionamento para a página de login realizado');
       } catch (error) {
-        console.error('Erro ao realizar logout:', error);
+        console.error('Erro durante o logout:', error);
       }
-    },
+
+  },
     fazerLogout() {
       localStorage.removeItem('token');
       localStorage.removeItem('user');
