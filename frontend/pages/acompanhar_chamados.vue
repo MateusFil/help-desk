@@ -40,8 +40,7 @@
                 <v-textarea label="Descrição" v-model="editChamadoData.descricao" :rules="[rules.required]" required />
                 <v-select label="Atribuído para" :items="usuarios" item-text="nome_completo" item-value="email"
                   v-model="editChamadoData.atribuido" />
-                <v-text-field label="Tempo de execução (Horas)" v-model="editChamadoData.tempo_execucao" required
-                  type="number" />
+                <v-select label="Prioridade" :items="prioridadeOptions" v-model="editChamadoData.prioridade" required />
                 <v-select label="Status" :items="statusOptions" v-model="editChamadoData.status" required />
               </v-form>
             </v-card-text>
@@ -96,8 +95,14 @@ export default {
       valid: false,
       editChamadoData: {},
       statusOptions: ['Backlog', 'Em Andamento', 'Em Produção'],
+      prioridadeOptions: [
+        { text: 'Baixa', value: 'BP' },
+        { text: 'Média', value: 'MP' },
+        { text: 'Alta', value: 'AP' }
+      ],
       headers: [
         { text: 'Título', value: 'titulo' },
+        { text: 'Prioridade', value: 'prioridadeDisplay' },
         { text: 'Atribuído Para', value: 'atribuido' },
         { text: 'Responsável', value: 'responsavel' },
         { text: 'Status', value: 'status' },
@@ -115,11 +120,8 @@ export default {
   methods: {
     async carregarChamados() {
       try {
-        let url = ''
-        let objRequest = {}
-
-        url = 'http://127.0.0.1:3333/acompanhar_chamados'
-        objRequest = {
+        let url = 'http://127.0.0.1:3333/acompanhar_chamados'
+        const objRequest = {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
           },
@@ -128,13 +130,18 @@ export default {
             tipo: this.userRole,
           }
         }
-
         const response = await axios.get(url, objRequest);
-        this.chamados = response.data;
-
+        this.chamados = response.data.map(chamado => ({
+          ...chamado,
+          prioridadeDisplay: this.getPrioridadeLabel(chamado.prioridade)
+        }));
       } catch (error) {
         console.error('Erro ao carregar chamados:', error);
       }
+    },
+    getPrioridadeLabel(value) {
+      const prioridade = this.prioridadeOptions.find(opt => opt.value === value);
+      return prioridade ? prioridade.text : value;
     },
     async carregarMensagens(id_chamado) {
       try {
@@ -187,38 +194,27 @@ export default {
       }
     },
     convertDateFormat(dateStr) {
-      // Separa a data e a hora
       const [datePart, timePart] = dateStr.split(' ');
-
-      // Divide a parte da data e a hora
       const [day, month, year] = datePart.split('-');
       const [hour, minute] = timePart.split(':');
-
-      // Retorna no novo formato
       return `${day}/${month}/${year} ${hour}:${minute}`;
     },
     async submitMensagem() {
       try {
-        this.message.id_chamado = this.editChamadoData.id
-        this.message.responsavel = this.$store.state.user.email
+        this.message.id_chamado = this.editChamadoData.id;
+        this.message.responsavel = this.$store.state.user.email;
         const response = await axios.post('http://127.0.0.1:3333/enviar_mensagem', this.message, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
           },
         });
-        // Limpar o formulário após sucesso
-        this.message = {
-          mensagem: '',
-        };
-        this.mensagens.push(response.data)
+        this.message = { mensagem: '' };
+        this.mensagens.push(response.data);
       } catch (error) {
         console.error('Erro ao abrir chamado:', error.response ? error.response.data : error.message);
-
         alert(`Erro ao abrir chamado: ${error.response ? error.response.data.error : error.message}`);
       }
     },
-
-
     async submitEdit() {
       if (this.$refs.form.validate()) {
         try {

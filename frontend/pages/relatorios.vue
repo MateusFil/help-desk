@@ -194,7 +194,7 @@ export default {
           "CodigoCriador": item.emailC,
           "CodigoAtribuido": item.emailA,
           "DataCriacao": item.data_criacao,
-          "CodigoSLA": item.tempo_execucao,
+          "CodigoSLA": item.prioridade,
         })
       });
 

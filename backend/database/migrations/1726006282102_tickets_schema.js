@@ -11,9 +11,15 @@ class TicketsSchema extends Schema {
       table.date('data_criacao').notNullable();
       table.string('responsavel').notNullable();
       table.string('atribuido').notNullable();
-      table.integer('tempo_execucao').notNullable(); // Em horas
+
+      // Alteração: campo prioridade em vez de tempo_execucao
+      table.enu('prioridade', ['BP', 'MP', 'AP']).notNullable(); // BP: Baixa, MP: Média, AP: Alta
+
       table.string('status').notNullable();
-      table.timestamps();
+
+      // Campos para registrar data e hora de criação e atualização
+      table.timestamp('created_at').defaultTo(this.fn.now());
+      table.timestamp('updated_at').defaultTo(this.fn.now());
     });
   }
 

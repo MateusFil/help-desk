@@ -115,6 +115,7 @@ export default {
                 }
 
                 const response = await axios.get(url, objRequest);
+                console.log('Chamados carregados:', response.data); // Adicione esta linha
                 const chamados = response.data;
 
                 this.ticketBacklog = chamados.filter((chamado) => chamado['status'] == 'Backlog');
