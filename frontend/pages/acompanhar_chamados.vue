@@ -34,14 +34,17 @@
               <v-btn v-if="userRole === 3 && editChamadoData.atribuido === null" class="botaoassumir" text
                 @click="assumirChamado">Assumir Chamado</v-btn>
             </div>
-            <v-card-text>
+            <v-card-text style="min-height: 490px;">
               <v-form ref="form" v-model="valid">
                 <v-text-field label="Título" v-model="editChamadoData.titulo" :rules="[rules.required]" required />
                 <v-textarea label="Descrição" v-model="editChamadoData.descricao" :rules="[rules.required]" required />
-                <v-select label="Atribuído para" :items="usuarios" item-text="nome_completo" item-value="email"
+                <v-select v-if="userRole === 1"
+                  label="Atribuído para" :items="usuarios" item-text="nome_completo" item-value="email"
                   v-model="editChamadoData.atribuido" />
-                <v-select label="Prioridade" :items="prioridadeOptions" v-model="editChamadoData.prioridade" required />
-                <v-select label="Status" :items="statusOptions" v-model="editChamadoData.status" required />
+                <v-select v-if="userRole === 1 || userRole === 3"
+                label="Prioridade" :items="prioridadeOptions" v-model="editChamadoData.prioridade" required />
+                <v-select v-if="userRole === 1 || userRole === 3"
+                label="Status" :items="statusOptions" v-model="editChamadoData.status" required />
               </v-form>
             </v-card-text>
 
@@ -93,6 +96,8 @@ export default {
       search: '',
       dialog: false,
       valid: false,
+      isStatusUpdate: false,
+      previousStatus: '',
       editChamadoData: {},
       statusOptions: ['Backlog', 'Andamento', 'Finalizado'],
       prioridadeOptions: [
@@ -116,6 +121,8 @@ export default {
   async created() {
     await this.carregarChamados();
     await this.carregarUsuarios();
+    this.isStatusUpdate = false;
+    this.previousStatus = '';
   },
   methods: {
     async carregarChamados() {
@@ -171,6 +178,7 @@ export default {
     async editChamado(item) {
       this.editChamadoData = { ...item };
       await this.carregarMensagens(this.editChamadoData.id);
+      this.previousStatus = item.status
       this.dialog = true;
     },
     async assumirChamado() {
@@ -202,22 +210,35 @@ export default {
     async submitMensagem() {
       try {
         this.message.id_chamado = this.editChamadoData.id;
-        this.message.responsavel = this.$store.state.user.email;
+
+        if (this.isStatusUpdate) {
+          this.message.responsavel = "Sistema";
+          this.message.mensagem = `Status atualizado para ${this.editChamadoData.status}`;
+        } else {
+          this.message.responsavel = this.$store.state.user.email;
+        }
+
         const response = await axios.post('http://127.0.0.1:3333/enviar_mensagem', this.message, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
           },
         });
-        this.message = { mensagem: '' };
+
+        // Limpar o formulário após sucesso
+        this.message = {
+          mensagem: '',
+        };
         this.mensagens.push(response.data);
       } catch (error) {
-        console.error('Erro ao abrir chamado:', error.response ? error.response.data : error.message);
-        alert(`Erro ao abrir chamado: ${error.response ? error.response.data.error : error.message}`);
+        console.error('Erro ao enviar mensagem:', error.response ? error.response.data : error.message);
+        alert(`Erro ao enviar mensagem: ${error.response ? error.response.data.error : error.message}`);
       }
     },
+
     async submitEdit() {
       if (this.$refs.form.validate()) {
         try {
+          // Realizar a atualização do chamado
           await axios.put(
             `http://127.0.0.1:3333/editar_chamado/${this.editChamadoData.id}`,
             this.editChamadoData,
@@ -227,8 +248,20 @@ export default {
               },
             }
           );
+
+          console.log(this.editChamadoData.status)
+          console.log(this.previousStatus)
+
+          // Verifica se o status foi alterado
+          if (this.editChamadoData.status !== this.previousStatus) {
+            // Envia a mensagem automática de status
+            this.isStatusUpdate = true;
+            await this.submitMensagem(); // Chama com o parâmetro true, indicando que é uma atualização de status
+          }
+
           alert('Chamado editado com sucesso!');
           this.dialog = false;
+          this.isStatusUpdate = false;
           this.carregarChamados(); // Recarrega a lista de chamados
         } catch (error) {
           console.error('Erro ao editar chamado:', error);
