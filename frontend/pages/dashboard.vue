@@ -45,26 +45,48 @@
             </v-col>
         </v-row>
 
-        <v-dialog v-model="dialog" max-width="600px">
-            <v-card>
-                <v-card-title>
-                    <span class="headline">Detalhes do Ticket</span>
-                </v-card-title>
-                <v-card-text>
-                    <v-list-item>
-                        <v-list-item-content>
-                            <v-list-item-title>Título: {{ ticketDetails.titulo }}</v-list-item-title>
-                            <v-list-item-subtitle>Descrição: {{ ticketDetails.descricao }}</v-list-item-subtitle>
-                            <v-list-item-subtitle>Responsável: {{ ticketDetails.responsavel }}</v-list-item-subtitle>
-                            <v-list-item-subtitle>Atribuído: {{ ticketDetails.atribuido }}</v-list-item-subtitle>
-                            <v-list-item-subtitle>Status: {{ ticketDetails.status }}</v-list-item-subtitle>
-                            <v-list-item-subtitle>Prioridade: {{codPrioridade }} prioridade</v-list-item-subtitle>
-                        </v-list-item-content>
-                    </v-list-item>
-                </v-card-text>
-                <v-card-actions style="display: flex; justify-content: right;">
-                    <v-btn text @click="dialog = false">Fechar</v-btn>
-                </v-card-actions>
+        <v-dialog v-model="dialog" max-width="750px" >
+            <v-card  style="overflow: hidden; height: 260px;">
+                <v-row>
+                    <v-col>
+                        <v-card-title>
+                            <span class="headline">Detalhes do Ticket</span>
+                        </v-card-title>
+                        <v-card-text>
+                            <v-list-item>
+                                <v-list-item-content>
+                                    <v-list-item-title>Título: {{ ticketDetails.titulo }}</v-list-item-title>
+                                    <v-list-item-subtitle>Descrição: {{ ticketDetails.descricao
+                                        }}</v-list-item-subtitle>
+                                    <v-list-item-subtitle>Responsável: {{ ticketDetails.responsavel
+                                        }}</v-list-item-subtitle>
+                                    <v-list-item-subtitle>Atribuído: {{ ticketDetails.atribuido
+                                        }}</v-list-item-subtitle>
+                                    <v-list-item-subtitle>Status: {{ ticketDetails.status }}</v-list-item-subtitle>
+                                    <v-list-item-subtitle>Prioridade: {{ codPrioridade }}
+                                        prioridade</v-list-item-subtitle>
+                                </v-list-item-content>
+                            </v-list-item>
+                        </v-card-text>
+                    </v-col>
+                    <v-col style="max-height:606px">
+                        <v-card-title>
+                            <span class="headline">Progresso do Chamado:</span>
+                        </v-card-title>
+                        <div class="showMensagens">
+                            <div class="title_outterChat" v-for="mensagem in mensagens">
+                                <div style="display: flex; justify-content: space-between; padding-right: 0px;">
+                                    <h6 style="margin-left: 0px;">{{ convertDateFormat(mensagem.created_at) }}</h6>
+                                </div>
+                                <v-list-item-subtitle style="margin-bottom: 1px;">{{ mensagem.mensagem }}</v-list-item-subtitle>
+                            </div>
+                        </div>
+                        <v-card-actions style="display: flex; justify-content: right;">
+                            <v-btn style="margin-right: 14px;" text @click="dialog = false">Fechar</v-btn>
+                        </v-card-actions>
+
+                    </v-col>
+                </v-row>
             </v-card>
         </v-dialog>
     </v-container>
@@ -77,17 +99,20 @@ export default {
     data() {
         return {
             tickets: [],
+            message: {},
+
+            mensagens: [],
             search: '',
             dialog: false,
             userRole: this.$store.state.user.tipo,
             emailLogado: this.$store.state.user.email,
             setorLogado: this.$store.state.user.tipo,
-            prioridadeOptions : {
-            'BP': 'Baixa',
-            'MP': 'Média',
-            'AP': 'Alta',
+            prioridadeOptions: {
+                'BP': 'Baixa',
+                'MP': 'Média',
+                'AP': 'Alta',
             },
-            codPrioridade : '',
+            codPrioridade: '',
             chamados: [],
             ticketDetails: {},
             ticketBacklog: [],
@@ -132,10 +157,29 @@ export default {
                 console.error('Erro ao carregar chamados:', error);
             }
         },
-        abrirDetalhes(ticket) {
+        async carregarMensagens(id_chamado) {
+        try {
+            let listMensagem;
+            const response = await axios.get('http://127.0.0.1:3333/acompanhar_chat', {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem('token')}`,
+            },
+            params: { id_chamado }
+            });
+            listMensagem = response.data;
+
+            this.mensagens = listMensagem.filter((mensage) => mensage['responsavel'] == 'Sistema');
+        } catch (error) {
+            console.error('Erro ao carregar mensagens:', error);
+        }
+        },
+        async abrirDetalhes(ticket) {
             this.ticketDetails = ticket;
             this.dialog = true;
             this.codPrioridade = this.prioridadeOptions[this.ticketDetails.prioridade];
+
+
+            await this.carregarMensagens(ticket.id);
         },
         convertDateFormat(dateStr) {
             const [datePart, timePart] = dateStr.split(' ');
@@ -174,6 +218,16 @@ export default {
 
 .coluna {
     height: 750px;
+}
+
+.showMensagens {
+    height: 140px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    align-self: center;
+    display: flex;
+    flex-wrap: wrap;
+    padding: 12px;
 }
 
 .card-tickets {
