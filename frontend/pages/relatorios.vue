@@ -191,9 +191,11 @@ export default {
       chamados.forEach(item => {
         F_Chamados.push({
           "idChamado": item.id,
+          "TituloChamado": item.titulo,
           "CodigoCriador": item.emailC,
           "CodigoAtribuido": item.emailA,
-          "DataCriacao": item.data_criacao,
+          "DataCriacao": this.formatTime(item.data_criacao),
+          "StatusChamado": item.status,
           "CodigoSLA": item.prioridade,
         })
       });
@@ -235,6 +237,11 @@ export default {
         D_Hierarquia,
         D_CodigoSLA
       };
+    },
+
+    formatTime(isoTime) {
+      const data = new Date(isoTime)
+      return data.toLocaleDateString("pt-BR") + " " + data.toLocaleTimeString("pt-BR")
     },
 
     async downloadXLSX() {
