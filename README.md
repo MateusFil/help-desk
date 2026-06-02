@@ -29,7 +29,7 @@ Make sure you have the following software installed in your development environm
 1. **Clone the repository:**
 
 ```bash
-git clone https://github.com/AthonEdu/2024-2-chamados.git
+git clone https://github.com/MateusFil/help-desk.git
 cd 2024-2-chamados
 ```
 
